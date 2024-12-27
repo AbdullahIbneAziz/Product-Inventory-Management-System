@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exchange Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #2c3e50;
+        }
+
+        .navbar-brand img {
+            width: 100px;
+            height: auto;
+        }
+
+        .admin-dropdown {
+            cursor: pointer;
+        }
+
+        .nav-link {
+            color: white !important;
+            margin: 0 10px;
+        }
+
+        .nav-link:hover {
+            color: #ddd !important;
+        }
+
+        .nav-link.active {
+            font-weight: bold;
+            border-bottom: 2px solid white;
+        }
+
+        .main-content {
+            padding: 30px 0;
+        }
+
+        .table-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .accept-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+        }
+
+        .accepted-status {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .exchange-form-group {
+            margin-bottom: 1rem;
+        }
+
+        .exchange-form-group label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .exchange-form-group input {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="home.html">
+                <img src="img/image.jpg" alt="Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="inventory.html">Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="supplier.html">Supplier</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sales.html">Sales</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="exchange.html">Exchange</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="feedback.html">Feedback</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <div class="admin-dropdown d-flex align-items-center text-white" data-bs-toggle="dropdown">
+                        <img src="img/admin-icon.png" alt="Admin" style="width: 30px; margin-right: 10px;">
+                        <span>Admin</span>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="table-container">
+            <h2 class="mb-4">Exchange Requests</h2>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Sale ID</th>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Product Quantity</th>
+                        <th>Exchange Product ID</th>
+                        <th>Exchange Product Name</th>
+                        <th>Exchange Product Quantity</th>
+                        <th>Confirmation Status</th>
+                    </tr>
+                </thead>
+                <tbody id="exchangeTableBody">
+                    <!-- Sample exchange data -->
+                    <tr>
+                        <td>SL001</td>
+                        <td>P101</td>
+                        <td>Cotton T-Shirt</td>
+                        <td>2</td>
+                        <td>P102</td>
+                        <td>Polo T-Shirt</td>
+                        <td>1</td>
+                        <td>
+                            <button class="accept-btn" onclick="showExchangeModal('SL001', 'Cotton T-Shirt', 2, 'Polo T-Shirt', 1)">
+                                Accept
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Exchange Confirmation Modal -->
+    <div class="modal fade" id="exchangeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Exchange Request Confirm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="exchangeForm">
+                        <div class="exchange-form-group">
+                            <label>Returning:</label>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>Product Name:</label>
+                                    <input type="text" class="form-control" id="returningProduct" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Quantity:</label>
+                                    <input type="number" class="form-control" id="returningQuantity" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exchange-form-group">
+                            <label>Exchanging:</label>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>Product Name:</label>
+                                    <input type="text" class="form-control" id="exchangingProduct" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Quantity:</label>
+                                    <input type="number" class="form-control" id="exchangingQuantity" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="confirmExchange()">Accept</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function logout() {
+            window.location.href = 'index.html';
+        }
+
+        let currentSaleId = '';
+        
+        function showExchangeModal(saleId, returningProduct, returningQty, exchangingProduct, exchangingQty) {
+            currentSaleId = saleId;
+            document.getElementById('returningProduct').value = returningProduct;
+            document.getElementById('returningQuantity').value = returningQty;
+            document.getElementById('exchangingProduct').value = exchangingProduct;
+            document.getElementById('exchangingQuantity').value = exchangingQty;
+            
+            new bootstrap.Modal(document.getElementById('exchangeModal')).show();
+        }
+
+        function confirmExchange() {
+            // Find the row by sale ID and update the status
+            const rows = document.querySelectorAll('#exchangeTableBody tr');
+            rows.forEach(row => {
+                const saleIdCell = row.cells[0];
+                if (saleIdCell.textContent === currentSaleId) {
+                    const statusCell = row.cells[row.cells.length - 1];
+                    statusCell.innerHTML = '<span class="accepted-status">Accepted</span>';
+                }
+            });
+            
+            // Close the modal
+            const modal = document.getElementById('exchangeModal');
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            modalInstance.hide();
+        }
+    </script>
+</body>
+</html> 

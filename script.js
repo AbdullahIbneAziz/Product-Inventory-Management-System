@@ -9,7 +9,7 @@ function validateLogin(event) {
     if (username === 'admin' && password === 'admin') {
         // Successful login
         errorMessage.style.display = 'none';
-        window.location.href = 'inventory.html';
+        window.location.href = 'home.html';
     } else {
         // Failed login
         errorMessage.style.display = 'block';
