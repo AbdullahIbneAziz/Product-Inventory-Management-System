@@ -9,7 +9,10 @@ function validateLogin(event) {
     if (username === 'admin' && password === 'admin') {
         // Successful login
         errorMessage.style.display = 'none';
-        window.location.href = 'home.html';
+        // Set login status in session storage
+        sessionStorage.setItem('isLoggedIn', 'true');
+        // Redirect to home page
+        window.location.replace('home.html');
     } else {
         // Failed login
         errorMessage.style.display = 'block';

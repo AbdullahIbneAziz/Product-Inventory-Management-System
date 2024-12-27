@@ -13,6 +13,27 @@
 
         .navbar {
             background-color: #2c3e50;
+            padding: 8px 0;
+        }
+
+        .navbar-brand img {
+            width: 80px;
+            height: auto;
+        }
+
+        .nav-link {
+            color: white !important;
+            margin: 0 10px;
+            padding: 5px 0;
+        }
+
+        .nav-link:hover {
+            color: #ddd !important;
+        }
+
+        .nav-link.active {
+            font-weight: bold;
+            border-bottom: 2px solid white;
         }
 
         .main-content {
@@ -57,15 +78,6 @@
                         <a class="nav-link" href="feedback.html">Feedback</a>
                     </li>
                 </ul>
-                <div class="dropdown">
-                    <div class="admin-dropdown d-flex align-items-center text-white" data-bs-toggle="dropdown">
-                        <img src="img/admin-icon.png" alt="Admin" style="width: 30px; margin-right: 10px;">
-                        <span>Admin</span>
-                    </div>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
-                    </ul>
-                </div>
             </div>
         </div>
     </nav>

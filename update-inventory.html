@@ -33,6 +33,22 @@
             border-bottom: 2px solid white;
         }
     </style>
+    <script>
+        // Prevent back button navigation
+        window.onload = function() {
+            if (!sessionStorage.getItem('isLoggedIn')) {
+                window.location.replace('index.html');
+            }
+            history.pushState(null, null, location.href);
+        }
+        
+        window.onpopstate = function() {
+            if (!sessionStorage.getItem('isLoggedIn')) {
+                window.location.replace('index.html');
+            }
+            history.pushState(null, null, location.href);
+        }
+    </script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -77,10 +93,13 @@
     <!-- Rest of your update inventory content -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="session.js"></script>
     <script>
         function logout() {
             window.location.href = 'index.html';
         }
+        // Check login status when page loads
+        checkLogin();
     </script>
 </body>
 </html> 
