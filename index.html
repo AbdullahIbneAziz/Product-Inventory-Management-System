@@ -9,11 +9,20 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             background-color: #f5f5f5;
             font-family: Arial, sans-serif;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 150px;
+            height: auto;
         }
 
         .login-container {
@@ -109,6 +118,7 @@
     </style>
 </head>
 <body>
+    <img src="image.png" alt="Logo" class="logo">
     <div class="login-container">
         <div class="header-image">
             <span>SIGN IN</span>
@@ -134,4 +144,4 @@
     </div>
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
