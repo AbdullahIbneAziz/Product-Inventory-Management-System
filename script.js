@@ -9,9 +9,7 @@ function validateLogin(event) {
     if (username === 'admin' && password === 'admin') {
         // Successful login
         errorMessage.style.display = 'none';
-        alert('Login successful!');
-        // You can redirect to dashboard or other page here
-        // window.location.href = 'dashboard.html';
+        window.location.href = 'inventory.html';
     } else {
         // Failed login
         errorMessage.style.display = 'block';
