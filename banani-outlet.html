@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banani Outlet Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Copy the common styles from other pages */
         body {
             background-color: #f5f5f5;
             min-height: 100vh;
@@ -30,8 +30,48 @@
             background-color: white;
             border-radius: 10px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-tile {
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .feature-tile:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+
+        .feature-tile .tile-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            width: 100%;
+            padding: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -49,9 +89,52 @@
     </nav>
 
     <div class="container main-content">
-        <div class="dashboard-card">
-            <h2>Banani Outlet Dashboard</h2>
-            <!-- Add outlet-specific content here -->
+        <!-- Charts Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h4>Monthly Sales Trend</h4>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h4>Feedback Rating Trend</h4>
+                    <div class="chart-container">
+                        <canvas id="feedbackChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Tiles -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="feature-tile" onclick="window.location.href='view-stock.html'">
+                    <img src="img/View Stock.jpg" alt="View Stock">
+                    <div class="tile-content">View Stock</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-tile" onclick="window.location.href='request-stock.html'">
+                    <img src="img/Request Stock.jpg" alt="Request Stock">
+                    <div class="tile-content">Request Stock</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-tile" onclick="window.location.href='outlet-exchange.html'">
+                    <img src="img/Exchange.jpg" alt="Exchange">
+                    <div class="tile-content">Exchange</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-tile" onclick="window.location.href='outlet-sales.html'">
+                    <img src="img/Sales Report.jpg" alt="Sales Report">
+                    <div class="tile-content">Sales Report</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -62,6 +145,63 @@
         if (sessionStorage.getItem('outletType') !== 'banani') {
             window.location.replace('index.html');
         }
+
+        // Sales Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Monthly Sales',
+                    data: [65000, 72000, 85000, 78000, 90000, 95000],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '৳' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Feedback Chart
+        const feedbackCtx = document.getElementById('feedbackChart').getContext('2d');
+        new Chart(feedbackCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Rating',
+                    data: [4.2, 4.3, 4.4, 4.5, 4.6, 4.7],
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 3.5,
+                        max: 5,
+                        ticks: {
+                            stepSize: 0.5
+                        }
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html> 
