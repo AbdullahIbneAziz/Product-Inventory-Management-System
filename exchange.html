@@ -136,7 +136,7 @@
                         <th>Exchange Product ID</th>
                         <th>Exchange Product Name</th>
                         <th>Exchange Product Quantity</th>
-                        <th>Confirmation Status</th>
+                        <th>Branch Name</th>
                     </tr>
                 </thead>
                 <tbody id="exchangeTableBody">
@@ -149,11 +149,17 @@
                         <td>P102</td>
                         <td>Polo T-Shirt</td>
                         <td>1</td>
-                        <td>
-                            <button class="accept-btn" onclick="showExchangeModal('SL001', 'Cotton T-Shirt', 2, 'Polo T-Shirt', 1)">
-                                Accept
-                            </button>
-                        </td>
+                        <td>Mirpur Branch</td>
+                    </tr>
+                    <tr>
+                        <td>SL002</td>
+                        <td>P103</td>
+                        <td>Denim Jeans</td>
+                        <td>1</td>
+                        <td>P104</td>
+                        <td>Cargo Pants</td>
+                        <td>1</td>
+                        <td>Uttara Branch</td>
                     </tr>
                     <!-- Add more rows as needed -->
                 </tbody>
@@ -166,7 +172,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Exchange Request Confirm</h5>
+                    <h5 class="modal-title">Exchange Request Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -197,10 +203,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="exchange-form-group">
+                            <label>Branch Name:</label>
+                            <input type="text" class="form-control" id="branchName" readonly>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="confirmExchange()">Accept</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -221,24 +231,14 @@
             document.getElementById('exchangingProduct').value = exchangingProduct;
             document.getElementById('exchangingQuantity').value = exchangingQty;
             
-            new bootstrap.Modal(document.getElementById('exchangeModal')).show();
-        }
-
-        function confirmExchange() {
-            // Find the row by sale ID and update the status
-            const rows = document.querySelectorAll('#exchangeTableBody tr');
-            rows.forEach(row => {
-                const saleIdCell = row.cells[0];
-                if (saleIdCell.textContent === currentSaleId) {
-                    const statusCell = row.cells[row.cells.length - 1];
-                    statusCell.innerHTML = '<span class="accepted-status">Accepted</span>';
-                }
-            });
+            // Find the branch name from the table
+            const row = document.querySelector(`#exchangeTableBody tr:has(td:first-child:contains('${saleId}'))`);
+            if (row) {
+                const branchName = row.cells[7].textContent;
+                document.getElementById('branchName').value = branchName;
+            }
             
-            // Close the modal
-            const modal = document.getElementById('exchangeModal');
-            const modalInstance = bootstrap.Modal.getInstance(modal);
-            modalInstance.hide();
+            new bootstrap.Modal(document.getElementById('exchangeModal')).show();
         }
     </script>
 </body>
