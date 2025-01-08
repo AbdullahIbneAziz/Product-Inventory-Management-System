@@ -53,10 +53,35 @@
             margin-bottom: 20px;
         }
 
+        .print-header {
+            display: none;
+        }
+
         @media print {
             .navbar, .back-button, .print-btn {
                 display: none;
             }
+            
+            .print-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 30px;
+                border-bottom: 2px solid #2c3e50;
+                padding-bottom: 20px;
+            }
+
+            .print-header img {
+                width: 150px;
+                height: auto;
+                margin-right: 30px;
+            }
+
+            .print-header h1 {
+                font-size: 36px;
+                color: #2c3e50;
+                margin: 0;
+            }
+
             .table {
                 width: 100%;
                 border: 1px solid #dee2e6;
@@ -105,6 +130,11 @@
     </nav>
 
     <div class="container main-content">
+        <div class="print-header">
+            <img src="img/image.jpg" alt="Company Logo">
+            <h1>Product List</h1>
+        </div>
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <button class="btn btn-secondary back-button" onclick="window.location.href='inventory.html'">
                 Back to Inventory
