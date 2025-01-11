@@ -78,7 +78,8 @@
         }
     </style>
     <script>
-        // Prevent back button navigation
+        // Remove this block entirely since we're using session.js
+        /*
         window.onload = function() {
             if (!sessionStorage.getItem('isLoggedIn')) {
                 window.location.replace('index.html');
@@ -92,6 +93,7 @@
             }
             history.pushState(null, null, location.href);
         }
+        */
     </script>
 </head>
 <body>
@@ -162,9 +164,9 @@
         function handleConfirm() {
             const selectedOperation = document.getElementById('operationSelect').value;
             if (selectedOperation === 'add') {
-                window.location.href = 'add-inventory.html';
+                window.location.replace('add-inventory.html');
             } else if (selectedOperation === 'update') {
-                window.location.href = 'edit-inventory.html';
+                window.location.replace('edit-inventory.html');
             }
         }
 
