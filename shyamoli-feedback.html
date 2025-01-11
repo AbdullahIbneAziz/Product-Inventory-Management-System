@@ -134,10 +134,8 @@
         function handleSubmit(event) {
             event.preventDefault();
             
-            // Generate unique report number
             const reportNo = 'FR' + Date.now();
             
-            // Get form data
             const feedbackData = {
                 reportNo: reportNo,
                 date: new Date().toISOString().split('T')[0],
@@ -148,20 +146,15 @@
                 description: document.getElementById('description').value
             };
             
-            // Get existing feedback history
             let feedbackHistory = JSON.parse(sessionStorage.getItem('feedbackHistory') || '[]');
             
-            // Add new feedback
             feedbackHistory.push(feedbackData);
             
-            // Save to session storage
             sessionStorage.setItem('feedbackHistory', JSON.stringify(feedbackHistory));
             
-            // Show success popup
             const popup = document.getElementById('successPopup');
             popup.style.display = 'block';
             
-            // Redirect to view feedback page after delay
             setTimeout(() => {
                 popup.style.display = 'none';
                 window.location.href = 'shyamoli-view-feedback.html';
@@ -170,4 +163,4 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>

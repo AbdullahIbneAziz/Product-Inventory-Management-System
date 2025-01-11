@@ -78,7 +78,6 @@
         }
     </style>
     <script>
-        // Prevent back button navigation
         window.onload = function() {
             if (!sessionStorage.getItem('isLoggedIn')) {
                 window.location.replace('index.html');
@@ -153,7 +152,6 @@
             window.location.href = 'index.html';
         }
 
-        // Enable/disable confirm button based on selection
         document.getElementById('operationSelect').addEventListener('change', function() {
             const confirmBtn = document.getElementById('confirmBtn');
             confirmBtn.disabled = !this.value;
@@ -168,8 +166,7 @@
             }
         }
 
-        // Check login status when page loads
         checkLogin();
     </script>
 </body>
-</html> 
+</html>

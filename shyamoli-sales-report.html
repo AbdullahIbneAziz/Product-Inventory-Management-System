@@ -71,7 +71,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const pointNo = urlParams.get('point');
             
-            // Get sales history from session storage
             const salesHistory = JSON.parse(sessionStorage.getItem('salesHistory') || '[]');
             const report = salesHistory.find(sale => sale.pointNo === pointNo);
             
@@ -91,4 +90,4 @@
         window.onload = loadReport;
     </script>
 </body>
-</html> 
+</html>
