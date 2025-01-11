@@ -124,7 +124,7 @@
         </div>
 
         <!-- Admin Login Form -->
-        <form id="admin-login" onsubmit="return validateAdminLogin(event)">
+        <form id="admin-login" onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label for="admin-username">Username</label>
                 <input type="text" id="admin-username" placeholder="Enter username" required>
@@ -155,7 +155,7 @@
         </div>
 
         <!-- Outlet Credentials Form -->
-        <form id="outlet-credentials" onsubmit="return validateOutletLogin(event)">
+        <form id="outlet-credentials" onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label for="outlet-username">Username</label>
                 <input type="text" id="outlet-username" placeholder="Enter username" required>
@@ -206,48 +206,46 @@
             }
         }
 
-        function validateAdminLogin(event) {
+        function handleLogin(event) {
             event.preventDefault();
-            const username = document.getElementById('admin-username').value;
-            const password = document.getElementById('admin-password').value;
-            const errorMessage = document.getElementById('error-message');
+            const isAdminForm = document.getElementById('admin-login').style.display !== 'none';
 
-            if (username === 'admin' && password === 'admin') {
-                errorMessage.style.display = 'none';
-                sessionStorage.setItem('isLoggedIn', 'true');
-                window.location.replace('home.html');
+            if (isAdminForm) {
+                // Admin login
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+
+                if (username === 'admin' && password === 'admin123') {
+                    setLoginSession('admin', null);
+                    window.location.href = 'home.html';
+                } else {
+                    alert('Invalid admin credentials!');
+                }
             } else {
-                errorMessage.style.display = 'block';
-                errorMessage.textContent = 'Invalid admin credentials';
+                // Outlet login
+                const username = document.getElementById('outlet-username').value;
+                const password = document.getElementById('outlet-password').value;
+                const outlet = document.getElementById('outlet-choice').value;
+
+                if (!outlet) {
+                    alert('Please select an outlet first');
+                    return;
+                }
+
+                const credentials = {
+                    banani: { username: 'banani', password: 'banani123' },
+                    shyamoli: { username: 'shyamoli', password: 'shyamoli123' }
+                };
+
+                if (credentials[outlet] && 
+                    username === credentials[outlet].username && 
+                    password === credentials[outlet].password) {
+                    setLoginSession('outlet', outlet);
+                    window.location.href = `${outlet}-outlet.html`;
+                } else {
+                    alert('Invalid outlet credentials!');
+                }
             }
-            return false;
-        }
-
-        function validateOutletLogin(event) {
-            event.preventDefault();
-            const outlet = document.getElementById('outlet-choice').value;
-            const username = document.getElementById('outlet-username').value;
-            const password = document.getElementById('outlet-password').value;
-            const errorMessage = document.getElementById('error-message');
-
-            // Example credentials (you should replace these with actual credentials)
-            const credentials = {
-                banani: { username: 'banani', password: 'banani123' },
-                shyamoli: { username: 'shyamoli', password: 'shyamoli123' }
-            };
-
-            if (credentials[outlet] && 
-                username === credentials[outlet].username && 
-                password === credentials[outlet].password) {
-                errorMessage.style.display = 'none';
-                sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('outletType', outlet);
-                window.location.replace(`${outlet}-outlet.html`);
-            } else {
-                errorMessage.style.display = 'block';
-                errorMessage.textContent = 'Invalid outlet credentials';
-            }
-            return false;
         }
 
         // Handle forgot password
@@ -258,5 +256,6 @@
             });
         });
     </script>
+    <script src="session.js"></script>
 </body>
 </html>

@@ -66,8 +66,14 @@
                         url('img/Inventrory-update_iventory.jpg') center/cover no-repeat;
         }
 
+        .card.view-request {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('img/View Request Form.jpg') center/cover no-repeat;
+        }
+
         .card.product-list .card-title,
-        .card.update-inventory .card-title {
+        .card.update-inventory .card-title,
+        .card.view-request .card-title {
             color: white;
             position: relative;
             z-index: 1;
@@ -139,6 +145,13 @@
                 <div class="card update-inventory" onclick="window.location.href='update-inventory.html'">
                     <div class="card-body">
                         <h5 class="card-title">Update Inventory</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card view-request" onclick="window.location.href='view-branch-requests.html'">
+                    <div class="card-body">
+                        <h5 class="card-title">View Request From Branch</h5>
                     </div>
                 </div>
             </div>

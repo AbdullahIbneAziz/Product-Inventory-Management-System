@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Fashion Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background-color: #f5f5f5;
@@ -40,8 +39,51 @@
         .info-card {
             background-color: #f8f9fa;
             border-radius: 8px;
-            padding: 15px;
+            padding: 25px;
             margin-bottom: 20px;
+            height: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        .info-card h5 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .info-card p {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .info-card small {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .branch-card {
+            cursor: pointer;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #e9ecef;
+        }
+
+        .branch-card:hover {
+            background-color: #f8f9fa;
         }
 
         .nav-link {
@@ -51,6 +93,33 @@
 
         .nav-link:hover {
             color: #ddd !important;
+        }
+
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .supplier-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .supplier-item {
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .low-stock-item {
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
@@ -99,65 +168,78 @@
     <div class="container main-content">
         <!-- Dashboard -->
         <div class="dashboard-card">
-            <h3 class="mb-4">Dashboard</h3>
+            <h3 class="mb-4" style="color: #2c3e50;">Dashboard</h3>
             <div class="row">
-                <div class="col-md-6 col-lg-3">
-                    <div class="info-card">
+                <div class="col-md-6 col-lg-4">
+                    <div class="info-card" onclick="showLowStockProducts()">
                         <h5>Low Stock Products</h5>
-                        <p class="text-danger mb-0">15 items</p>
+                        <p class="text-danger">15 items</p>
                         <small>Requires immediate attention</small>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="info-card">
+                <div class="col-md-6 col-lg-4">
+                    <div class="info-card" onclick="showSupplierList()">
                         <h5>List of Suppliers</h5>
-                        <p class="text-primary mb-0">8 active suppliers</p>
+                        <p class="text-primary">8 active suppliers</p>
                         <small>Last updated: Today</small>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="info-card">
+                <div class="col-md-6 col-lg-4">
+                    <div class="info-card" onclick="window.location.href='branch-sales.html'">
                         <h5>Sales from Both Outlets</h5>
-                        <p class="text-success mb-0">৳125,000</p>
+                        <p class="text-success">৳125,000</p>
                         <small>This month</small>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="info-card">
-                        <h5>Feedback Rating</h5>
-                        <p class="text-warning mb-0">4.5/5.0</p>
-                        <small>Based on 150 reviews</small>
-                    </div>
-                </div>
             </div>
             <div class="row mt-4">
                 <div class="col-md-6">
-                    <div class="info-card">
-                        <h5>Monthly Sales Trend</h5>
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <h5>Feedback Rating Trend</h5>
-                        <canvas id="feedbackChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="info-card" onclick="window.location.href='admin-banani-stock.html'" style="cursor: pointer;">
+                    <div class="info-card branch-card" onclick="window.location.href='admin-banani-stock.html'">
                         <h5>Banani Branch Stock</h5>
-                        <p class="text-muted mb-0">View current inventory: 250 items</p>
+                        <p class="text-muted">View current inventory: 250 items</p>
                         <small>Click to view details</small>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="info-card" onclick="window.location.href='admin-shyamoli-stock.html'" style="cursor: pointer;">
+                    <div class="info-card branch-card" onclick="window.location.href='admin-shyamoli-stock.html'">
                         <h5>Shyamoli Branch Stock</h5>
-                        <p class="text-muted mb-0">View current inventory: 180 items</p>
+                        <p class="text-muted">View current inventory: 180 items</p>
                         <small>Click to view details</small>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Products Modal -->
+    <div class="modal fade" id="lowStockModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Low Stock Products</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="lowStockList">
+                        <!-- Low stock items will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supplier List Modal -->
+    <div class="modal fade" id="supplierModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">List of Suppliers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="supplier-list" id="supplierList">
+                        <!-- Supplier items will be added here -->
+                    </ul>
                 </div>
             </div>
         </div>
@@ -169,89 +251,52 @@
             window.location.href = 'index.html';
         }
 
-        // Sales Chart
-        const salesCtx = document.getElementById('salesChart').getContext('2d');
-        new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [
-                    {
-                        label: 'Banani Outlet',
-                        data: [65000, 72000, 85000, 78000, 90000, 95000],
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        tension: 0.3
-                    },
-                    {
-                        label: 'Shyamoli Outlet',
-                        data: [55000, 68000, 70000, 75000, 82000, 80000],
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        tension: 0.3
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Monthly Sales (৳)'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '৳' + value.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        function showLowStockProducts() {
+            const lowStockList = document.getElementById('lowStockList');
+            // Sample data - replace with actual data
+            const products = [
+                { name: 'T-Shirt Black XL', current: 5, minimum: 10 },
+                { name: 'Jeans Blue 32', current: 3, minimum: 8 },
+                // Add more products
+            ];
 
-        // Feedback Chart
-        const feedbackCtx = document.getElementById('feedbackChart').getContext('2d');
-        new Chart(feedbackCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [
-                    {
-                        label: 'Banani Outlet',
-                        data: [4.2, 4.3, 4.4, 4.5, 4.6, 4.7],
-                        borderColor: 'rgba(255, 159, 64, 1)',
-                        tension: 0.3
-                    },
-                    {
-                        label: 'Shyamoli Outlet',
-                        data: [4.0, 4.2, 4.3, 4.4, 4.5, 4.5],
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        tension: 0.3
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Monthly Feedback Rating'
-                    }
+            lowStockList.innerHTML = products.map(product => `
+                <div class="low-stock-item">
+                    <div>
+                        <strong>${product.name}</strong>
+                        <br>
+                        <small class="text-danger">Current Stock: ${product.current} (Min: ${product.minimum})</small>
+                    </div>
+                </div>
+            `).join('');
+
+            new bootstrap.Modal(document.getElementById('lowStockModal')).show();
+        }
+
+        function showSupplierList() {
+            const supplierList = document.getElementById('supplierList');
+            // Sample data - replace with actual data
+            const suppliers = [
+                {
+                    name: 'ABC Textiles',
+                    contact: '+880 1234567890',
+                    email: 'contact@abctextiles.com',
+                    address: 'House 123, Road 4, Dhaka'
                 },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 3.5,
-                        max: 5,
-                        ticks: {
-                            stepSize: 0.5
-                        }
-                    }
-                }
-            }
-        });
+                // Add more suppliers
+            ];
+
+            supplierList.innerHTML = suppliers.map(supplier => `
+                <li class="supplier-item">
+                    <h6>${supplier.name}</h6>
+                    <p class="mb-1"><i class="fas fa-phone"></i> ${supplier.contact}</p>
+                    <p class="mb-1"><i class="fas fa-envelope"></i> ${supplier.email}</p>
+                    <p class="mb-0"><i class="fas fa-map-marker-alt"></i> ${supplier.address}</p>
+                </li>
+            `).join('');
+
+            new bootstrap.Modal(document.getElementById('supplierModal')).show();
+        }
     </script>
 </body>
 </html> 

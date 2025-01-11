@@ -75,6 +75,14 @@
             margin: 0;
             font-size: 18px;
         }
+
+        @media print {
+            .back-btn, 
+            .logout-btn,
+            .btn-outline-light {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -84,12 +92,14 @@
                 <img src="img/image.jpg" alt="Logo">
                 Banani Outlet
             </a>
-            <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+            <div class="d-flex">
+                <button class="btn btn-outline-light logout-btn" onclick="logout()">Logout</button>
+            </div>
         </div>
     </nav>
 
-    <div class="container">
-        <button class="btn btn-secondary back-btn mt-4" onclick="window.location.href='banani-outlet.html'">
+    <div class="container main-content">
+        <button class="btn btn-secondary back-btn" onclick="window.location.href='banani-outlet.html'">
             Back to Dashboard
         </button>
 
@@ -126,7 +136,7 @@
                     <input type="number" class="form-control" id="netPrice" readonly>
                 </div>
 
-                <button type="submit" class="confirm-btn">Print</button>
+                <button type="submit" class="confirm-btn">Confirm</button>
             </form>
         </div>
     </div>
@@ -177,12 +187,37 @@
 
         function handleSubmit(event) {
             event.preventDefault();
+            
+            // Generate a unique sales point number
+            const pointNo = 'SP' + Date.now();
+            
+            // Get the form data
+            const salesData = {
+                pointNo: pointNo,
+                date: new Date().toISOString().split('T')[0],
+                productId: document.getElementById('productId').value,
+                quantity: document.getElementById('quantity').value,
+                price: document.getElementById('price').value,
+                netPrice: document.getElementById('netPrice').value
+            };
+            
+            // Get existing sales history or initialize new array
+            let salesHistory = JSON.parse(sessionStorage.getItem('salesHistory') || '[]');
+            
+            // Add new sales record
+            salesHistory.push(salesData);
+            
+            // Save updated history
+            sessionStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+            
+            // Show success popup
             const popup = document.getElementById('successPopup');
             popup.style.display = 'block';
             
+            // Redirect after delay
             setTimeout(() => {
                 popup.style.display = 'none';
-                window.location.href = 'banani-outlet.html';
+                window.location.href = 'sales-point.html';
             }, 2000);
         }
     </script>

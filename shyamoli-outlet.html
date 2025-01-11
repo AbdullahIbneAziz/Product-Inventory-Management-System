@@ -70,8 +70,32 @@
         }
 
         .chart-container {
-            height: 300px;
+            height: 400px;
             margin-bottom: 20px;
+        }
+
+        .chart-section {
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .features-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .feature-col {
+            flex: 0 0 calc(20% - 30px);
+            min-width: 250px;
         }
     </style>
 </head>
@@ -89,9 +113,9 @@
     </nav>
 
     <div class="container main-content">
-        <!-- Charts Section -->
-        <div class="row">
-            <div class="col-md-6">
+        <!-- Dashboard Cards -->
+        <div class="chart-section">
+            <div class="col-12">
                 <div class="dashboard-card">
                     <h4>Monthly Sales Trend</h4>
                     <div class="chart-container">
@@ -99,40 +123,56 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="dashboard-card">
-                    <h4>Feedback Rating Trend</h4>
-                    <div class="chart-container">
-                        <canvas id="feedbackChart"></canvas>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Feature Tiles -->
-        <div class="row">
-            <div class="col-md-3">
-                <div class="feature-tile" onclick="window.location.href='shyamoli-stock.html'">
-                    <img src="img/View Stock.jpg" alt="View Stock">
-                    <div class="tile-content">View Stock</div>
+        <div class="features-container">
+            <div class="features-row">
+                <!-- First row: 4 cards -->
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='shyamoli-view-stock.html'">
+                        <img src="img/View Stock.jpg" alt="View Stock">
+                        <div class="tile-content">View Stock</div>
+                    </div>
+                </div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='shyamoli-request-stock.html'">
+                        <img src="img/Request Stock.jpg" alt="Request Stock">
+                        <div class="tile-content">Request Stock</div>
+                    </div>
+                </div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='shyamoli-exchange.html'">
+                        <img src="img/Exchange.jpg" alt="Exchange">
+                        <div class="tile-content">Exchange</div>
+                    </div>
+                </div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='shyamoli-outlet-sales.html'">
+                        <img src="img/Sales Report.jpg" alt="Sales Report">
+                        <div class="tile-content">Sales Report</div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="feature-tile" onclick="window.location.href='shyamoli-request-stock.html'">
-                    <img src="img/Request Stock.jpg" alt="Request Stock">
-                    <div class="tile-content">Request Stock</div>
+            <div class="features-row">
+                <!-- Second row: 4 cards -->
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='sales-point.html'">
+                        <img src="img/Sales Report background.jpg" alt="View Sales Report">
+                        <div class="tile-content">View Sales Report</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature-tile" onclick="window.location.href='shyamoli-exchange.html'">
-                    <img src="img/Exchange.jpg" alt="Exchange">
-                    <div class="tile-content">Exchange</div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='shyamoli-feedback.html'">
+                        <img src="img/Feedback Report.jpg" alt="Feedback Report">
+                        <div class="tile-content">Feedback Report</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature-tile" onclick="window.location.href='shyamoli-outlet-sales.html'">
-                    <img src="img/Sales Report.jpg" alt="Sales Report">
-                    <div class="tile-content">Sales Report</div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='shyamoli-view-feedback.html'">
+                        <img src="img/View Feedback Report.jpg" alt="View Feedback Report">
+                        <div class="tile-content">View Feedback Report</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -169,34 +209,6 @@
                             callback: function(value) {
                                 return '৳' + value.toLocaleString();
                             }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Feedback Chart
-        const feedbackCtx = document.getElementById('feedbackChart').getContext('2d');
-        new Chart(feedbackCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Rating',
-                    data: [4.0, 4.2, 4.3, 4.4, 4.5, 4.5], // Different data for Shyamoli
-                    borderColor: 'rgba(255, 159, 64, 1)',
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        min: 3.5,
-                        max: 5,
-                        ticks: {
-                            stepSize: 0.5
                         }
                     }
                 }

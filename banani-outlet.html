@@ -38,17 +38,19 @@
         }
 
         .feature-tile {
-            height: 200px;
+            height: 220px;
             border-radius: 10px;
             overflow: hidden;
             position: relative;
             cursor: pointer;
             transition: transform 0.3s;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .feature-tile:hover {
             transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .feature-tile img {
@@ -65,16 +67,45 @@
             transform: translate(-50%, -50%);
             color: white;
             text-align: center;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             width: 100%;
             padding: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .chart-container {
-            height: 300px;
+            height: 400px;
             margin-bottom: 20px;
+        }
+
+        .chart-section {
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .features-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .feature-col {
+            flex: 0 0 calc(20% - 30px);
+            min-width: 250px;
         }
     </style>
 </head>
@@ -93,8 +124,8 @@
 
     <div class="container main-content">
         <!-- Charts Section -->
-        <div class="row">
-            <div class="col-md-6">
+        <div class="chart-section">
+            <div class="col-12">
                 <div class="dashboard-card">
                     <h4>Monthly Sales Trend</h4>
                     <div class="chart-container">
@@ -102,40 +133,54 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="dashboard-card">
-                    <h4>Feedback Rating Trend</h4>
-                    <div class="chart-container">
-                        <canvas id="feedbackChart"></canvas>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Feature Tiles -->
-        <div class="row">
-            <div class="col-md-3">
-                <div class="feature-tile" onclick="window.location.href='banani-view-stock.html'">
-                    <img src="img/View Stock.jpg" alt="View Stock">
-                    <div class="tile-content">View Stock</div>
+        <div class="features-container">
+            <div class="features-row">
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='banani-view-stock.html'">
+                        <img src="img/View Stock.jpg" alt="View Stock">
+                        <div class="tile-content">View Stock</div>
+                    </div>
+                </div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='banani-request-stock.html'">
+                        <img src="img/Request Stock.jpg" alt="Request Stock">
+                        <div class="tile-content">Request Stock</div>
+                    </div>
+                </div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='banani-exchange.html'">
+                        <img src="img/Exchange.jpg" alt="Exchange">
+                        <div class="tile-content">Exchange</div>
+                    </div>
+                </div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='banani-outlet-sales.html'">
+                        <img src="img/Sales Report.jpg" alt="Sales Report">
+                        <div class="tile-content">Sales Report</div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="feature-tile" onclick="window.location.href='banani-request-stock.html'">
-                    <img src="img/Request Stock.jpg" alt="Request Stock">
-                    <div class="tile-content">Request Stock</div>
+            <div class="features-row">
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='sales-point.html'">
+                        <img src="img/Sales Report background.jpg" alt="View Sales Report">
+                        <div class="tile-content">View Sales Report</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature-tile" onclick="window.location.href='banani-exchange.html'">
-                    <img src="img/Exchange.jpg" alt="Exchange">
-                    <div class="tile-content">Exchange</div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='banani-feedback.html'">
+                        <img src="img/Feedback Report.jpg" alt="Feedback Report">
+                        <div class="tile-content">Feedback Report</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature-tile" onclick="window.location.href='banani-outlet-sales.html'">
-                    <img src="img/Sales Report.jpg" alt="Sales Report">
-                    <div class="tile-content">Sales Report</div>
+                <div class="feature-col">
+                    <div class="feature-tile" onclick="window.location.href='banani-view-feedback.html'">
+                        <img src="img/View Feedback Report.jpg" alt="View Feedback Report">
+                        <div class="tile-content">View Feedback Report</div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,0 +1,65 @@
+<style>
+    .navbar {
+        background-color: #2c3e50;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .navbar-brand img {
+        width: 150px;  /* Standardized logo size */
+        height: auto;
+        object-fit: contain;
+    }
+
+    .report-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .report-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .report-header img {
+        width: 200px;  /* Larger logo for the printed report */
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .report-container {
+            box-shadow: none;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-header {
+            margin-bottom: 40px;
+        }
+    }
+</style>
+
+<!-- Update the report content structure -->
+<div class="report-container">
+    <div id="reportContent">
+        <div class="report-header">
+            <img src="img/image.jpg" alt="Logo">
+            <h3>Feedback Report - ${report.reportNo}</h3>
+        </div>
+        <!-- Rest of the content -->
+    </div>
+    <button class="btn btn-primary mt-3 no-print" onclick="window.print()">Print Report</button>
+</div> 
