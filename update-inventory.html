@@ -164,9 +164,15 @@
         function handleConfirm() {
             const selectedOperation = document.getElementById('operationSelect').value;
             if (selectedOperation === 'add') {
-                window.location.replace('add-inventory.html');
+                window.location.href = 'add-inventory.html';
             } else if (selectedOperation === 'update') {
-                window.location.replace('edit-inventory.html');
+                // First check if there are any products
+                const products = JSON.parse(sessionStorage.getItem('products') || '[]');
+                if (products.length === 0) {
+                    alert('No products available to update. Please add products first.');
+                    return;
+                }
+                window.location.href = 'edit-inventory.html';
             }
         }
 

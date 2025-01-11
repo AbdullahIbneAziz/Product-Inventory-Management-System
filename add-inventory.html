@@ -209,23 +209,31 @@
         function handleSubmit(event) {
             event.preventDefault();
             
-            // Get form values
-            const productId = document.getElementById('productId').value;
-            const productName = document.getElementById('productName').value;
-            const quantity = document.getElementById('quantity').value;
-            const unitPrice = document.getElementById('unitPrice').value;
-            const supplier = document.getElementById('supplier').value;
+            const outletType = sessionStorage.getItem('outletType'); // 'banani' or 'shyamoli'
+            
+            const product = {
+                id: document.getElementById('productId').value,
+                name: document.getElementById('productName').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+                unitPrice: parseFloat(document.getElementById('unitPrice').value),
+                supplier: document.getElementById('supplier').value,
+                lastUpdated: new Date().toISOString(),
+                outlet: outletType
+            };
 
-            // Here you would typically send this data to your backend
-            console.log('Adding product:', {
-                productId,
-                productName,
-                quantity,
-                unitPrice,
-                supplier
-            });
+            // Get existing outlet data or initialize
+            const outletData = JSON.parse(sessionStorage.getItem(outletType) || '{"products": [], "salesHistory": []}');
+            
+            // Check if product ID already exists for this outlet
+            if (outletData.products.some(p => p.id === product.id)) {
+                alert('Product ID already exists in this outlet!');
+                return;
+            }
 
-            // Show animated success popup
+            // Add new product to outlet's inventory
+            outletData.products.push(product);
+            sessionStorage.setItem(outletType, JSON.stringify(outletData));
+
             showSuccessPopup();
         }
     </script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Inventory</title>
+    <title>Edit Inventory</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* ... Copy navbar styles from add-inventory.html ... */
@@ -149,53 +149,39 @@
             <button class="btn btn-secondary back-btn" onclick="window.location.href='update-inventory.html'">
                 Back
             </button>
-            <h2 class="mb-4">Update Inventory</h2>
-            <form id="updateInventoryForm" onsubmit="handleSubmit(event)">
-                <div class="form-group">
-                    <label for="productId">Product ID</label>
-                    <select class="form-control" id="productId" required onchange="handleProductSelect()">
-                        <option value="">Select Product ID</option>
-                        <option value="P001">P001</option>
-                        <option value="P002">P002</option>
-                        <option value="P003">P003</option>
-                    </select>
-                    <div class="product-name" id="productName"></div>
-                </div>
+            <h2 class="mb-4">Update Product</h2>
+            
+            <!-- Product Selection -->
+            <div class="form-group mb-4">
+                <label for="productSelect">Select Product</label>
+                <select class="form-select" id="productSelect" onchange="loadProductDetails()">
+                    <option value="">Select a product</option>
+                </select>
+            </div>
 
+            <!-- Update Form -->
+            <form id="updateForm" onsubmit="handleUpdate(event)" style="display: none;">
+                <div class="form-group">
+                    <label>Product ID</label>
+                    <input type="text" class="form-control" id="productId" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" class="form-control" id="productName" required>
+                </div>
                 <div class="form-group">
                     <label>Quantity</label>
-                    <select class="form-control update-option" id="quantityOption" onchange="toggleUpdateField('quantity')">
-                        <option value="nochange">Don't Change</option>
-                        <option value="update">Select</option>
-                    </select>
-                    <div class="update-field" id="quantityField">
-                        <input type="number" class="form-control" id="quantity" min="1">
-                    </div>
+                    <input type="number" class="form-control" id="quantity" min="0" required>
                 </div>
-
                 <div class="form-group">
                     <label>Unit Price</label>
-                    <select class="form-control update-option" id="priceOption" onchange="toggleUpdateField('price')">
-                        <option value="nochange">Don't Change</option>
-                        <option value="update">Select</option>
-                    </select>
-                    <div class="update-field" id="priceField">
-                        <input type="number" class="form-control" id="unitPrice" min="0" step="0.01">
-                    </div>
+                    <input type="number" class="form-control" id="unitPrice" min="0" step="0.01" required>
                 </div>
-
                 <div class="form-group">
                     <label>Supplier</label>
-                    <select class="form-control update-option" id="supplierOption" onchange="toggleUpdateField('supplier')">
-                        <option value="nochange">Don't Change</option>
-                        <option value="update">Select</option>
-                    </select>
-                    <div class="update-field" id="supplierField">
-                        <input type="text" class="form-control" id="supplier">
-                    </div>
+                    <input type="text" class="form-control" id="supplier" required>
                 </div>
-
-                <button type="submit" class="btn-submit">Update Product</button>
+                <button type="submit" class="btn btn-primary mt-3">Update Product</button>
             </form>
         </div>
     </div>
@@ -213,74 +199,82 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="session.js"></script>
     <script>
-        // Sample product data (replace with your actual data)
-        const products = {
-            'P001': { name: 'Cotton T-Shirt', quantity: 100, price: 19.99, supplier: 'Supplier A' },
-            'P002': { name: 'Denim Jeans', quantity: 75, price: 49.99, supplier: 'Supplier B' },
-            'P003': { name: 'Polo Shirt', quantity: 50, price: 29.99, supplier: 'Supplier C' }
-        };
-
-        function handleProductSelect() {
-            const productId = document.getElementById('productId').value;
-            const productNameDiv = document.getElementById('productName');
+        // Load product list into select dropdown
+        function loadProductList() {
+            const outletType = sessionStorage.getItem('outletType');
+            const outletData = JSON.parse(sessionStorage.getItem(outletType) || '{"products": [], "salesHistory": []}');
+            const products = outletData.products;
             
-            if (productId && products[productId]) {
-                productNameDiv.textContent = products[productId].name;
-                productNameDiv.style.display = 'block';
-            } else {
-                productNameDiv.textContent = '';
-                productNameDiv.style.display = 'none';
+            const select = document.getElementById('productSelect');
+            
+            // Clear existing options except first
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+
+            // Add products to dropdown
+            products.forEach(product => {
+                const option = new Option(
+                    `${product.id} - ${product.name}`, 
+                    product.id
+                );
+                select.add(option);
+            });
+        }
+
+        // Load selected product details into form
+        function loadProductDetails() {
+            const productId = document.getElementById('productSelect').value;
+            const updateForm = document.getElementById('updateForm');
+            
+            if (!productId) {
+                updateForm.style.display = 'none';
+                return;
+            }
+
+            const outletType = sessionStorage.getItem('outletType');
+            const outletData = JSON.parse(sessionStorage.getItem(outletType) || '{"products": [], "salesHistory": []}');
+            const product = outletData.products.find(p => p.id === productId);
+
+            if (product) {
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('quantity').value = product.quantity;
+                document.getElementById('unitPrice').value = product.unitPrice;
+                document.getElementById('supplier').value = product.supplier;
+                updateForm.style.display = 'block';
             }
         }
 
-        function toggleUpdateField(field) {
-            const option = document.getElementById(`${field}Option`).value;
-            const fieldDiv = document.getElementById(`${field}Field`);
-            const input = fieldDiv.querySelector('input');
-            
-            if (option === 'update') {
-                fieldDiv.classList.add('show');
-                input.required = true;
-            } else {
-                fieldDiv.classList.remove('show');
-                input.required = false;
-                input.value = '';
-            }
-        }
-
-        function handleSubmit(event) {
+        // Handle form submission
+        function handleUpdate(event) {
             event.preventDefault();
             
-            const productId = document.getElementById('productId').value;
-            const updates = {};
+            const outletType = sessionStorage.getItem('outletType');
+            const updatedProduct = {
+                id: document.getElementById('productId').value,
+                name: document.getElementById('productName').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+                unitPrice: parseFloat(document.getElementById('unitPrice').value),
+                supplier: document.getElementById('supplier').value,
+                lastUpdated: new Date().toISOString(),
+                outlet: outletType
+            };
 
-            ['quantity', 'price', 'supplier'].forEach(field => {
-                const option = document.getElementById(`${field}Option`).value;
-                if (option === 'update') {
-                    const input = document.getElementById(field === 'price' ? 'unitPrice' : field);
-                    updates[field] = input.value;
-                }
-            });
-
-            console.log('Updating product:', productId, updates);
-            showSuccessPopup();
+            // Update product in outlet's storage
+            const outletData = JSON.parse(sessionStorage.getItem(outletType) || '{"products": [], "salesHistory": []}');
+            const index = outletData.products.findIndex(p => p.id === updatedProduct.id);
+            
+            if (index !== -1) {
+                outletData.products[index] = updatedProduct;
+                sessionStorage.setItem(outletType, JSON.stringify(outletData));
+                alert('Product updated successfully!');
+                window.location.href = 'product-list.html';
+            }
         }
 
-        function showSuccessPopup() {
-            const popup = document.getElementById('successPopup');
-            popup.style.display = 'block';
-            
-            // Reset animations by removing and re-adding the elements
-            const checkmark = popup.querySelector('.checkmark');
-            const checkmarkClone = checkmark.cloneNode(true);
-            checkmark.parentNode.replaceChild(checkmarkClone, checkmark);
-            
-            // Hide popup and redirect after 2 seconds
-            setTimeout(() => {
-                popup.style.display = 'none';
-                window.location.href = 'inventory.html';
-            }, 2000);
-        }
+        // Load product list when page loads
+        window.addEventListener('load', loadProductList);
 
         function logout() {
             window.location.href = 'index.html';

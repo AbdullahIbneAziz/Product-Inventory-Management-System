@@ -55,6 +55,36 @@
         .urgency-low {
             color: #28a745;
         }
+
+        .back-button {
+            margin: 20px 30px;  /* Matches the form's left padding */
+            padding: 8px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+
+        .back-button i {
+            font-size: 14px;
+        }
+
+        .request-form {
+            margin-top: 15px;
+        }
+
+        .back-button-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
     </style>
 </head>
 <body>
@@ -69,6 +99,8 @@
             </div>
         </div>
     </nav>
+
+    <button onclick="window.location.href='shyamoli-outlet.html'" class="back-button">Back</button>
 
     <div class="container main-content">
         <div class="request-form">

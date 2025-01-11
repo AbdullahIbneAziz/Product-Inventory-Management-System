@@ -103,6 +103,19 @@
 
         // Add a new sales record
         function addSalesRecord(pointNo, date) {
+            const outletType = sessionStorage.getItem('outletType');
+            const outletData = JSON.parse(sessionStorage.getItem(outletType) || '{"products": [], "salesHistory": []}');
+            
+            // Add new sales record
+            outletData.salesHistory.push({
+                pointNo,
+                date,
+                outlet: outletType
+            });
+            
+            sessionStorage.setItem(outletType, JSON.stringify(outletData));
+
+            // Update display
             const recordDiv = document.createElement('div');
             recordDiv.className = 'sales-record';
             recordDiv.setAttribute('data-point-no', pointNo);
@@ -159,27 +172,26 @@
             }
         }
 
-        // Example usage
+        // Load sales records on page load
         window.onload = function() {
-            // Get sales history from session storage
-            const salesHistory = JSON.parse(sessionStorage.getItem('salesHistory') || '[]');
+            const outletType = sessionStorage.getItem('outletType');
+            const outletData = JSON.parse(sessionStorage.getItem(outletType) || '{"products": [], "salesHistory": []}');
+            const salesHistory = outletData.salesHistory;
             
-            // Clear existing records
             document.getElementById('salesRecords').innerHTML = '';
             
-            // Display all records from storage
-            salesHistory.forEach(sale => {
-                addSalesRecord(sale.pointNo, sale.date);
-            });
-
-            // If no records exist, show a message
             if (salesHistory.length === 0) {
                 document.getElementById('salesRecords').innerHTML = `
                     <div class="text-center text-muted">
-                        <p>No sales records found</p>
+                        <p>No sales records found for ${outletType} outlet</p>
                     </div>
                 `;
+                return;
             }
+
+            salesHistory.forEach(sale => {
+                addSalesRecord(sale.pointNo, sale.date);
+            });
         }
     </script>
 </body>

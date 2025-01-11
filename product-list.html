@@ -223,6 +223,31 @@
         function logout() {
             window.location.href = 'index.html';
         }
+
+        // Function to load and display products
+        function loadProducts() {
+            const outletType = sessionStorage.getItem('outletType');
+            const outletData = JSON.parse(sessionStorage.getItem(outletType) || '{"products": [], "salesHistory": []}');
+            const products = outletData.products;
+            
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.quantity}</td>
+                    <td>৳${product.unitPrice.toFixed(2)}</td>
+                    <td>${product.supplier}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load products when page loads
+        window.addEventListener('load', loadProducts);
     </script>
 </body>
 </html> 
