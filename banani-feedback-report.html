@@ -96,18 +96,29 @@
             const reportNo = urlParams.get('report');
             
             const feedbackHistory = JSON.parse(sessionStorage.getItem('feedbackHistory') || '[]');
-            const report = feedbackHistory.find(f => f.reportNo === reportNo);
+            const report = feedbackHistory.find(f => f.reportNo === reportNo && f.outlet === 'Banani');
             
             if (report) {
                 document.getElementById('reportContent').innerHTML = `
-                    <h3>Feedback Report - ${report.reportNo}</h3>
-                    <p>Date: ${report.date}</p>
-                    <hr>
-                    <p><strong>Product ID:</strong> ${report.productId}</p>
-                    <p><strong>Product Name:</strong> ${report.productName}</p>
-                    <p><strong>Quantity Sold:</strong> ${report.quantitySold}</p>
-                    <p><strong>Sale:</strong> ৳${report.sale}</p>
-                    <p><strong>Description:</strong><br>${report.description}</p>
+                    <div class="report-header">
+                        <img src="img/image.jpg" alt="Logo">
+                        <h3>Feedback Report - ${report.reportNo}</h3>
+                    </div>
+                    <div class="report-details">
+                        <p><strong>Date:</strong> ${report.date}</p>
+                        <p><strong>Outlet:</strong> ${report.outlet}</p>
+                        <p><strong>Product ID:</strong> ${report.productId}</p>
+                        <p><strong>Product Name:</strong> ${report.productName}</p>
+                        <p><strong>Quantity Sold:</strong> ${report.quantitySold}</p>
+                        <p><strong>Sale:</strong> ৳${report.sale}</p>
+                        <p><strong>Description:</strong><br>${report.description}</p>
+                        <p><strong>Total Responses:</strong> ${report.totalResponses}</p>
+                        <p><strong>Average Rating:</strong> ${report.averageRating}/5.0</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('reportContent').innerHTML = `
+                    <div class="alert alert-warning">Report not found</div>
                 `;
             }
         }
