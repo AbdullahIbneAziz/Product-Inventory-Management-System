@@ -148,8 +148,6 @@
                 <label for="outlet-choice">Choose Outlet</label>
                 <select id="outlet-choice" onchange="showOutletCredentials()">
                     <option value="">Select Outlet</option>
-                    <option value="banani">Banani Outlet</option>
-                    <option value="shyamoli">Shyamoli Outlet</option>
                 </select>
             </div>
         </div>
@@ -211,18 +209,12 @@
             const isAdminForm = document.getElementById('admin-login').style.display !== 'none';
 
             if (isAdminForm) {
-                // Admin login
                 const username = document.getElementById('admin-username').value;
                 const password = document.getElementById('admin-password').value;
-
-                if (username === 'admin' && password === 'admin123') {
-                    setLoginSession('admin', null);
-                    window.location.href = 'home.html';
-                } else {
-                    alert('Invalid admin credentials!');
-                }
+                
+                // Admin authentication logic should be implemented here
+                
             } else {
-                // Outlet login
                 const username = document.getElementById('outlet-username').value;
                 const password = document.getElementById('outlet-password').value;
                 const outlet = document.getElementById('outlet-choice').value;
@@ -232,19 +224,7 @@
                     return;
                 }
 
-                const credentials = {
-                    banani: { username: 'banani', password: 'banani123' },
-                    shyamoli: { username: 'shyamoli', password: 'shyamoli123' }
-                };
-
-                if (credentials[outlet] && 
-                    username === credentials[outlet].username && 
-                    password === credentials[outlet].password) {
-                    setLoginSession('outlet', outlet);
-                    window.location.href = `${outlet}-outlet.html`;
-                } else {
-                    alert('Invalid outlet credentials!');
-                }
+                // Outlet authentication logic should be implemented here
             }
         }
 

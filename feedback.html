@@ -191,7 +191,7 @@
     <script src="session.js"></script>
     <script>
         function createFeedbackRecord(feedback) {
-            console.log('Creating record for:', feedback); // For debugging
+            console.log('Creating record for:', feedback);
             return `
                 <div class="feedback-record">
                     <span class="outlet-badge outlet-${feedback.outlet.toLowerCase()}">
@@ -222,7 +222,7 @@
             const feedbackRecords = document.getElementById('feedbackRecords');
             const allFeedback = JSON.parse(sessionStorage.getItem('feedbackHistory') || '[]');
             
-            console.log('Loaded feedback:', allFeedback); // For debugging
+            console.log('Loaded feedback:', allFeedback);
             
             if (allFeedback.length === 0) {
                 feedbackRecords.innerHTML = `
@@ -233,7 +233,6 @@
                 return;
             }
 
-            // Sort feedback by date (newest first)
             allFeedback.sort((a, b) => {
                 const dateA = new Date(a.date);
                 const dateB = new Date(b.date);
@@ -246,7 +245,6 @@
         }
 
         function viewFeedbackReport(reportNo, outlet) {
-            // Redirect to the appropriate outlet's feedback report page
             const page = outlet.toLowerCase() === 'banani' 
                 ? 'banani-feedback-report.html' 
                 : 'shyamoli-feedback-report.html';
@@ -259,7 +257,6 @@
             }
         }
 
-        // Add this function to help with debugging
         function checkFeedbackData() {
             const feedbackData = sessionStorage.getItem('feedbackHistory');
             console.log('Raw feedback data:', feedbackData);
@@ -268,23 +265,17 @@
             }
         }
 
-        // Update the logout function
         function logout() {
-            // Clear session data
             sessionStorage.clear();
-            // Redirect to login page
             window.location.href = 'index.html';
         }
 
-        // Modify the window.onload function
         window.onload = function() {
-            // Check if logged in as admin
             if (sessionStorage.getItem('userType') !== 'admin') {
                 window.location.replace('index.html');
                 return;
             }
 
-            // Add active class to current nav item
             const currentPage = window.location.pathname.split('/').pop();
             document.querySelectorAll('.nav-link').forEach(link => {
                 if (link.getAttribute('href') === currentPage) {
@@ -294,10 +285,7 @@
                 }
             });
 
-            // Debug check
             checkFeedbackData();
-            
-            // Load feedback reports
             loadFeedbackReports();
         };
     </script>
