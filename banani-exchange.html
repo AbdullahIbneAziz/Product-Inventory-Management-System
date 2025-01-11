@@ -158,6 +158,9 @@
                     <label class="form-label">Original Product ID</label>
                     <select class="form-select" id="originalProductId" onchange="updateOriginalProduct()" required>
                         <option value="">Select Product ID</option>
+                        <option value="P001">P001</option>
+                        <option value="P002">P002</option>
+                        <option value="P003">P003</option>
                     </select>
                 </div>
 
@@ -180,6 +183,9 @@
                     <label class="form-label">Exchange Product ID</label>
                     <select class="form-select" id="exchangeProductId" onchange="updateExchangeProduct()" required>
                         <option value="">Select Product ID</option>
+                        <option value="P001">P001</option>
+                        <option value="P002">P002</option>
+                        <option value="P003">P003</option>
                     </select>
                 </div>
 
@@ -212,6 +218,13 @@
     </div>
 
     <script>
+        // Sample product data
+        const products = {
+            'P001': { name: 'Cotton T-Shirt', price: 599 },
+            'P002': { name: 'Denim Jeans', price: 1299 },
+            'P003': { name: 'Polo Shirt', price: 799 }
+        };
+
         function updateOriginalProduct() {
             const productId = document.getElementById('originalProductId').value;
             const product = products[productId];

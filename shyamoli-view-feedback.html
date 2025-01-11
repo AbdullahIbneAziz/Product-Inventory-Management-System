@@ -97,7 +97,7 @@
         </button>
 
         <div class="feedback-container">
-            <h2 class="mb-4">Feedback Reports</h2>
+            <h2 class="mb-4">Feedback Report No.</h2>
             <div id="feedbackRecords">
                 <!-- Feedback records will be added here dynamically -->
             </div>
@@ -129,6 +129,7 @@
         }
 
         function viewFeedback(reportNo) {
+            // Get feedback data and show in printable view
             const feedbackHistory = JSON.parse(sessionStorage.getItem('feedbackHistory') || '[]');
             const report = feedbackHistory.find(f => f.reportNo === reportNo);
             if (report) {
@@ -162,6 +163,7 @@
         }
 
         window.onload = function() {
+            // Check if logged in as Shyamoli outlet
             if (sessionStorage.getItem('outletType') !== 'shyamoli') {
                 window.location.replace('index.html');
             }
@@ -183,4 +185,4 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
+</html> 

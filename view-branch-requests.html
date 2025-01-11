@@ -168,6 +168,7 @@
     </style>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="home.html">
@@ -207,6 +208,7 @@
         </div>
     </nav>
 
+    <!-- Main Content -->
     <div class="container main-content">
         <div class="text-center mb-4">
             <h3 style="color: #2c3e50;">Branch Stock Requests</h3>
@@ -217,6 +219,7 @@
         </div>
 
         <div id="pendingRequests">
+            <!-- Pending request cards will be added here -->
         </div>
 
         <div class="history-section">
@@ -227,6 +230,7 @@
                 </button>
             </div>
             <div id="requestHistory">
+                <!-- Completed request cards will be added here -->
             </div>
         </div>
     </div>
@@ -238,19 +242,27 @@
         }
 
         function showBranchRequests(branch) {
+            // Update active tab
             document.querySelectorAll('.branch-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             event.target.classList.add('active');
 
+            // Get all requests from storage
             const allRequests = JSON.parse(sessionStorage.getItem('stockRequests') || '[]');
+            
+            // Filter requests for selected branch
             const branchRequests = allRequests.filter(req => req.branch.toLowerCase() === branch.toLowerCase());
+            
+            // Separate pending and completed requests
             const pendingRequests = branchRequests.filter(req => req.status === 'pending');
             const completedRequests = branchRequests.filter(req => req.status !== 'pending');
 
+            // Display pending requests
             const pendingList = document.getElementById('pendingRequests');
             pendingList.innerHTML = pendingRequests.map(request => createRequestCard(request)).join('');
 
+            // Display request history
             const historyList = document.getElementById('requestHistory');
             historyList.innerHTML = completedRequests.map(request => createRequestCard(request, true)).join('');
         }
@@ -312,6 +324,7 @@
                 requests[index].actionDate = new Date().toLocaleDateString();
                 sessionStorage.setItem('stockRequests', JSON.stringify(requests));
                 
+                // Refresh the current branch view
                 const activeBranch = document.querySelector('.branch-tab.active').textContent.toLowerCase().includes('banani') ? 'banani' : 'shyamoli';
                 showBranchRequests(activeBranch);
             }
@@ -333,7 +346,8 @@
             window.print();
         }
 
+        // Show Banani branch requests by default
         showBranchRequests('banani');
     </script>
 </body>
-</html>
+</html> 

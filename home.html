@@ -276,6 +276,7 @@
                 </div>
                 <div class="modal-body">
                     <div id="lowStockList">
+                        <!-- Low stock items will be added here -->
                     </div>
                 </div>
             </div>
@@ -292,6 +293,7 @@
                 </div>
                 <div class="modal-body">
                     <ul class="supplier-list" id="supplierList">
+                        <!-- Supplier items will be added here -->
                     </ul>
                 </div>
             </div>
@@ -306,11 +308,48 @@
 
         function showLowStockProducts() {
             const lowStockList = document.getElementById('lowStockList');
+            // Sample data - replace with actual data
+            const products = [
+                { name: 'T-Shirt Black XL', current: 5, minimum: 10 },
+                { name: 'Jeans Blue 32', current: 3, minimum: 8 },
+                // Add more products
+            ];
+
+            lowStockList.innerHTML = products.map(product => `
+                <div class="low-stock-item">
+                    <div>
+                        <strong>${product.name}</strong>
+                        <br>
+                        <small class="text-danger">Current Stock: ${product.current} (Min: ${product.minimum})</small>
+                    </div>
+                </div>
+            `).join('');
+
             new bootstrap.Modal(document.getElementById('lowStockModal')).show();
         }
 
         function showSupplierList() {
             const supplierList = document.getElementById('supplierList');
+            // Sample data - replace with actual data
+            const suppliers = [
+                {
+                    name: 'ABC Textiles',
+                    contact: '+880 1234567890',
+                    email: 'contact@abctextiles.com',
+                    address: 'House 123, Road 4, Dhaka'
+                },
+                // Add more suppliers
+            ];
+
+            supplierList.innerHTML = suppliers.map(supplier => `
+                <li class="supplier-item">
+                    <h6>${supplier.name}</h6>
+                    <p class="mb-1"><i class="fas fa-phone"></i> ${supplier.contact}</p>
+                    <p class="mb-1"><i class="fas fa-envelope"></i> ${supplier.email}</p>
+                    <p class="mb-0"><i class="fas fa-map-marker-alt"></i> ${supplier.address}</p>
+                </li>
+            `).join('');
+
             new bootstrap.Modal(document.getElementById('supplierModal')).show();
         }
     </script>

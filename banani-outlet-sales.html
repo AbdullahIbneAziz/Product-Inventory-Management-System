@@ -115,6 +115,9 @@
                     <label class="form-label">Product ID</label>
                     <select class="form-select" id="productId" onchange="updateProductDetails()" required>
                         <option value="">Select Product ID</option>
+                        <option value="P001">P001</option>
+                        <option value="P002">P002</option>
+                        <option value="P003">P003</option>
                     </select>
                 </div>
 
@@ -160,7 +163,11 @@
             window.location.replace('index.html');
         }
 
-        const products = {};
+        const products = {
+            'P001': { name: 'Cotton T-Shirt', price: 599 },
+            'P002': { name: 'Denim Jeans', price: 1299 },
+            'P003': { name: 'Polo Shirt', price: 799 }
+        };
 
         function updateProductDetails() {
             const productId = document.getElementById('productId').value;
@@ -181,8 +188,10 @@
         function handleSubmit(event) {
             event.preventDefault();
             
+            // Generate a unique sales point number
             const pointNo = 'SP' + Date.now();
             
+            // Get the form data
             const salesData = {
                 pointNo: pointNo,
                 date: new Date().toISOString().split('T')[0],
@@ -192,15 +201,20 @@
                 netPrice: document.getElementById('netPrice').value
             };
             
+            // Get existing sales history or initialize new array
             let salesHistory = JSON.parse(sessionStorage.getItem('salesHistory') || '[]');
             
+            // Add new sales record
             salesHistory.push(salesData);
             
+            // Save updated history
             sessionStorage.setItem('salesHistory', JSON.stringify(salesHistory));
             
+            // Show success popup
             const popup = document.getElementById('successPopup');
             popup.style.display = 'block';
             
+            // Redirect after delay
             setTimeout(() => {
                 popup.style.display = 'none';
                 window.location.href = 'sales-point.html';

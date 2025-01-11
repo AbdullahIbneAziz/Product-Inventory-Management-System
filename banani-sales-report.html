@@ -6,6 +6,7 @@
     <title>Sales Report Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Copy styles from sales-point.html and add: */
         .report-container {
             max-width: 600px;
             margin: 50px auto;
@@ -27,6 +28,8 @@
     </style>
 </head>
 <body>
+    <!-- Similar navbar as sales-point.html -->
+
     <div class="container">
         <div class="report-container">
             <button class="btn btn-secondary back-btn no-print" onclick="window.location.href='sales-point.html'">
@@ -49,6 +52,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const pointNo = urlParams.get('point');
             
+            // Get sales history from session storage
             const salesHistory = JSON.parse(sessionStorage.getItem('salesHistory') || '[]');
             const report = salesHistory.find(sale => sale.pointNo === pointNo);
             
@@ -68,4 +72,4 @@
         window.onload = loadReport;
     </script>
 </body>
-</html>
+</html> 

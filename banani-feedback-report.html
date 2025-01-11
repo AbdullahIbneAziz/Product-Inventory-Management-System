@@ -17,7 +17,7 @@
         }
 
         .navbar-brand img {
-            width: 150px;
+            width: 150px;  /* Standardized logo size */
             height: auto;
             object-fit: contain;
         }
@@ -37,7 +37,7 @@
         }
 
         .report-header img {
-            width: 200px;
+            width: 200px;  /* Larger logo for the printed report */
             height: auto;
             margin-bottom: 20px;
         }
@@ -81,7 +81,9 @@
             <div id="reportContent">
                 <div class="report-header">
                     <img src="img/image.jpg" alt="Logo">
+                    <h3>Feedback Report - ${report.reportNo}</h3>
                 </div>
+                <!-- Rest of the content -->
             </div>
             <button class="btn btn-primary mt-3 no-print" onclick="window.print()">Print Report</button>
         </div>
@@ -98,10 +100,7 @@
             
             if (report) {
                 document.getElementById('reportContent').innerHTML = `
-                    <div class="report-header">
-                        <img src="img/image.jpg" alt="Logo">
-                        <h3>Feedback Report - ${report.reportNo}</h3>
-                    </div>
+                    <h3>Feedback Report - ${report.reportNo}</h3>
                     <p>Date: ${report.date}</p>
                     <hr>
                     <p><strong>Product ID:</strong> ${report.productId}</p>
@@ -114,4 +113,4 @@
         }
     </script>
 </body>
-</html>
+</html> 

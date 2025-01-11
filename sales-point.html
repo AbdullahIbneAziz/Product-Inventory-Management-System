@@ -101,6 +101,7 @@
             window.location.href = `${outlet}-outlet.html`;
         }
 
+        // Add a new sales record
         function addSalesRecord(pointNo, date) {
             const recordDiv = document.createElement('div');
             recordDiv.className = 'sales-record';
@@ -124,22 +125,29 @@
             window.location.href = `${outlet}-sales-report.html?point=${pointNo}`;
         }
 
+        // Add new delete function
         function deleteSalesRecord(pointNo) {
             if (confirm('Are you sure you want to delete this sales record?')) {
+                // Get existing sales history
                 let salesHistory = JSON.parse(sessionStorage.getItem('salesHistory') || '[]');
                 
+                // Find the index of the record to delete
                 const indexToDelete = salesHistory.findIndex(sale => sale.pointNo === pointNo);
                 
                 if (indexToDelete !== -1) {
+                    // Remove only the specific record
                     salesHistory.splice(indexToDelete, 1);
                     
+                    // Update session storage
                     sessionStorage.setItem('salesHistory', JSON.stringify(salesHistory));
                     
+                    // Remove just the specific record element from DOM
                     const recordToDelete = document.querySelector(`[data-point-no="${pointNo}"]`);
                     if (recordToDelete) {
                         recordToDelete.remove();
                     }
 
+                    // Show "No records" message if this was the last record
                     if (salesHistory.length === 0) {
                         document.getElementById('salesRecords').innerHTML = `
                             <div class="text-center text-muted">
@@ -151,15 +159,20 @@
             }
         }
 
+        // Example usage
         window.onload = function() {
+            // Get sales history from session storage
             const salesHistory = JSON.parse(sessionStorage.getItem('salesHistory') || '[]');
             
+            // Clear existing records
             document.getElementById('salesRecords').innerHTML = '';
             
+            // Display all records from storage
             salesHistory.forEach(sale => {
                 addSalesRecord(sale.pointNo, sale.date);
             });
 
+            // If no records exist, show a message
             if (salesHistory.length === 0) {
                 document.getElementById('salesRecords').innerHTML = `
                     <div class="text-center text-muted">
