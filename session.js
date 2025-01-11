@@ -1,5 +1,13 @@
 // Check if user is logged in
 function checkLogin() {
+    // Debug logging
+    console.log('Current pathname:', window.location.pathname);
+    console.log('Session state:', {
+        isLoggedIn: sessionStorage.getItem('loggedIn'),
+        userType: sessionStorage.getItem('userType'),
+        outletType: sessionStorage.getItem('outletType')
+    });
+
     // Don't check login status on the login page
     if (window.location.pathname.endsWith('index.html')) {
         return true;
@@ -10,7 +18,8 @@ function checkLogin() {
     const outletType = sessionStorage.getItem('outletType');
     
     // Basic login check
-    if (!isLoggedIn) {
+    if (!isLoggedIn || isLoggedIn !== 'true') {
+        console.log('Login check failed - redirecting to login page');
         window.location.href = 'index.html';
         return false;
     }
@@ -22,11 +31,13 @@ function checkLogin() {
                          window.location.pathname.includes('shyamoli') ? 'shyamoli' : '';
         
         if (outletType !== urlOutlet) {
+            console.log('Outlet type mismatch - redirecting to login page');
             window.location.href = 'index.html';
             return false;
         }
     }
 
+    console.log('Login check passed');
     return true;
 }
 
@@ -52,8 +63,14 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-// Event listeners
-document.addEventListener('DOMContentLoaded', checkLogin);
+// Single event listener for session check
+if (!window.location.pathname.endsWith('index.html')) {
+    window.addEventListener('DOMContentLoaded', function() {
+        checkLogin();
+    });
+}
+
+// Handle back/forward cache
 window.addEventListener('pageshow', function(event) {
     if (event.persisted) {
         checkLogin();
