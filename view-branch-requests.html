@@ -99,14 +99,71 @@
             padding: 10px 20px;
             background-color: #f8f9fa;
             border: none;
-            margin-right: 10px;
+            margin: 0 5px;
             border-radius: 5px;
             transition: all 0.2s;
+            width: 200px;
+            font-size: 1.1rem;
+            border: 1px solid #e9ecef;
         }
 
         .branch-tab.active {
             background-color: #2c3e50;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .branch-tab:hover:not(.active) {
+            background-color: #e9ecef;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .branch-tabs-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .history-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .print-btn {
+            padding: 8px 20px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .print-btn:hover {
+            background-color: #34495e;
+            transform: translateY(-1px);
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .request-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
         }
     </style>
 </head>
@@ -153,16 +210,28 @@
 
     <!-- Main Content -->
     <div class="container main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="text-center mb-4">
             <h3 style="color: #2c3e50;">Branch Stock Requests</h3>
-            <div>
-                <button class="branch-tab active" onclick="showBranchRequests('banani')">Banani Branch</button>
-                <button class="branch-tab" onclick="showBranchRequests('shyamoli')">Shyamoli Branch</button>
-            </div>
+        </div>
+        <div class="branch-tabs-container no-print">
+            <button class="branch-tab active" onclick="showBranchRequests('banani')">Banani Branch</button>
+            <button class="branch-tab" onclick="showBranchRequests('shyamoli')">Shyamoli Branch</button>
         </div>
 
-        <div id="requestsList">
-            <!-- Request cards will be dynamically added here -->
+        <div id="pendingRequests">
+            <!-- Pending request cards will be added here -->
+        </div>
+
+        <div class="history-section">
+            <div class="history-header">
+                <h4 style="color: #2c3e50;">Request History</h4>
+                <button class="print-btn no-print" onclick="printHistory()">
+                    <i class="fas fa-print"></i> Print History
+                </button>
+            </div>
+            <div id="requestHistory">
+                <!-- Completed request cards will be added here -->
+            </div>
         </div>
     </div>
 
@@ -179,23 +248,27 @@
             });
             event.target.classList.add('active');
 
-            // Sample data - replace with actual data
-            const requests = [
-                {
-                    id: 'REQ001',
-                    date: '2024-01-15',
-                    items: [
-                        { name: 'T-Shirt Black XL', quantity: 20 },
-                        { name: 'Jeans Blue 32', quantity: 15 }
-                    ],
-                    status: 'pending',
-                    urgency: 'High'
-                },
-                // Add more sample requests
-            ];
+            // Get all requests from storage
+            const allRequests = JSON.parse(sessionStorage.getItem('stockRequests') || '[]');
+            
+            // Filter requests for selected branch
+            const branchRequests = allRequests.filter(req => req.branch.toLowerCase() === branch.toLowerCase());
+            
+            // Separate pending and completed requests
+            const pendingRequests = branchRequests.filter(req => req.status === 'pending');
+            const completedRequests = branchRequests.filter(req => req.status !== 'pending');
 
-            const requestsList = document.getElementById('requestsList');
-            requestsList.innerHTML = requests.map(request => `
+            // Display pending requests
+            const pendingList = document.getElementById('pendingRequests');
+            pendingList.innerHTML = pendingRequests.map(request => createRequestCard(request)).join('');
+
+            // Display request history
+            const historyList = document.getElementById('requestHistory');
+            historyList.innerHTML = completedRequests.map(request => createRequestCard(request, true)).join('');
+        }
+
+        function createRequestCard(request, isHistory = false) {
+            return `
                 <div class="request-card">
                     <div class="request-header d-flex justify-content-between align-items-center">
                         <div>
@@ -211,7 +284,7 @@
                             <strong>Requested Items:</strong>
                             <ul class="mt-2">
                                 ${request.items.map(item => `
-                                    <li>${item.name} - ${item.quantity} pcs</li>
+                                    <li>${item.name} - ${item.quantity} pcs (Size: ${item.size})</li>
                                 `).join('')}
                             </ul>
                         </div>
@@ -219,23 +292,58 @@
                             <strong>Urgency Level:</strong> 
                             <span class="text-danger">${request.urgency}</span>
                         </div>
+                        ${request.notes ? `
+                        <div class="mt-2">
+                            <strong>Notes:</strong> 
+                            <p class="mb-0">${request.notes}</p>
+                        </div>
+                        ` : ''}
+                        ${request.status !== 'pending' ? `
+                        <div class="mt-2">
+                            <strong>Action Date:</strong> 
+                            <span>${request.actionDate}</span>
+                        </div>
+                        ` : ''}
                     </div>
-                    <div class="request-footer d-flex justify-content-end gap-2">
+                    ${!isHistory ? `
+                    <div class="request-footer d-flex justify-content-end gap-2 no-print">
                         <button class="btn btn-success btn-sm" onclick="approveRequest('${request.id}')">Approve</button>
                         <button class="btn btn-danger btn-sm" onclick="rejectRequest('${request.id}')">Reject</button>
                     </div>
+                    ` : ''}
                 </div>
-            `).join('');
+            `;
+        }
+
+        function updateRequest(requestId, newStatus) {
+            const requests = JSON.parse(sessionStorage.getItem('stockRequests') || '[]');
+            const index = requests.findIndex(req => req.id === requestId);
+            
+            if (index !== -1) {
+                requests[index].status = newStatus;
+                requests[index].actionDate = new Date().toLocaleDateString();
+                sessionStorage.setItem('stockRequests', JSON.stringify(requests));
+                
+                // Refresh the current branch view
+                const activeBranch = document.querySelector('.branch-tab.active').textContent.toLowerCase().includes('banani') ? 'banani' : 'shyamoli';
+                showBranchRequests(activeBranch);
+            }
         }
 
         function approveRequest(requestId) {
-            // Add approval logic here
-            alert(`Request ${requestId} approved`);
+            if (confirm('Are you sure you want to approve this request?')) {
+                updateRequest(requestId, 'approved');
+            }
         }
 
         function rejectRequest(requestId) {
-            // Add rejection logic here
-            alert(`Request ${requestId} rejected`);
+            if (confirm('Are you sure you want to reject this request?')) {
+                updateRequest(requestId, 'rejected');
+            }
+        }
+
+        function printHistory() {
+            window.print();
         }
 
         // Show Banani branch requests by default

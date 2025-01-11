@@ -30,60 +30,108 @@
 
         .dashboard-card {
             background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
             margin-bottom: 30px;
         }
 
         .info-card {
             background-color: #f8f9fa;
             border-radius: 8px;
-            padding: 25px;
+            padding: 30px;
             margin-bottom: 20px;
             height: 100%;
             transition: transform 0.2s, box-shadow 0.2s;
             border: 1px solid #e9ecef;
             cursor: pointer;
-            min-height: 180px;
+            min-height: 200px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
 
         .info-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            background-color: white;
+            background-color: #ffffff;
+        }
+
+        .info-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #2c3e50;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover::after {
+            transform: scaleX(1);
         }
 
         .info-card h5 {
             color: #2c3e50;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin-bottom: 12px;
             font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .info-card h5::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: #2c3e50;
         }
 
         .info-card p {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 600;
             margin-bottom: 5px;
         }
 
         .info-card small {
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
         .branch-card {
-            cursor: pointer;
-            padding: 20px;
-            background-color: white;
-            border: 1px solid #e9ecef;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border: none;
+            position: relative;
+            z-index: 1;
         }
 
         .branch-card:hover {
-            background-color: #f8f9fa;
+            background: linear-gradient(145deg, #f8f9fa, #ffffff);
+        }
+
+        .branch-card p {
+            font-size: 1.6rem;
+            color: #2c3e50;
+        }
+
+        .view-details {
+            color: #2c3e50;
+            font-weight: 500;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .view-details:hover {
+            color: #34495e;
         }
 
         .nav-link {
@@ -168,27 +216,24 @@
     <div class="container main-content">
         <!-- Dashboard -->
         <div class="dashboard-card">
-            <h3 class="mb-4" style="color: #2c3e50;">Dashboard</h3>
+            <h3 class="mb-4" style="color: #2c3e50; font-weight: 600;">Dashboard Overview</h3>
             <div class="row">
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6">
                     <div class="info-card" onclick="showLowStockProducts()">
                         <h5>Low Stock Products</h5>
-                        <p class="text-danger">15 items</p>
-                        <small>Requires immediate attention</small>
+                        <div>
+                            <p class="text-danger mb-2">15 items</p>
+                            <small class="d-block">Requires immediate attention</small>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6">
                     <div class="info-card" onclick="showSupplierList()">
                         <h5>List of Suppliers</h5>
-                        <p class="text-primary">8 active suppliers</p>
-                        <small>Last updated: Today</small>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="info-card" onclick="window.location.href='branch-sales.html'">
-                        <h5>Sales from Both Outlets</h5>
-                        <p class="text-success">৳125,000</p>
-                        <small>This month</small>
+                        <div>
+                            <p class="text-primary mb-2">8 active suppliers</p>
+                            <small class="d-block">Last updated: Today</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -196,15 +241,25 @@
                 <div class="col-md-6">
                     <div class="info-card branch-card" onclick="window.location.href='admin-banani-stock.html'">
                         <h5>Banani Branch Stock</h5>
-                        <p class="text-muted">View current inventory: 250 items</p>
-                        <small>Click to view details</small>
+                        <div>
+                            <p class="mb-2">250 items</p>
+                            <small class="d-block">Current inventory status</small>
+                            <a href="admin-banani-stock.html" class="view-details mt-2 d-inline-block">
+                                View Details →
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="info-card branch-card" onclick="window.location.href='admin-shyamoli-stock.html'">
                         <h5>Shyamoli Branch Stock</h5>
-                        <p class="text-muted">View current inventory: 180 items</p>
-                        <small>Click to view details</small>
+                        <div>
+                            <p class="mb-2">180 items</p>
+                            <small class="d-block">Current inventory status</small>
+                            <a href="admin-shyamoli-stock.html" class="view-details mt-2 d-inline-block">
+                                View Details →
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
