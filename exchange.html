@@ -210,48 +210,19 @@
                 <thead>
                     <tr>
                         <th>Sale ID</th>
-                        <th>Product ID</th>
-                        <th>Product Name</th>
-                        <th>Product Quantity</th>
-                        <th>Exchange Product ID</th>
-                        <th>Exchange Product Name</th>
-                        <th>Exchange Product Quantity</th>
-                        <th>Branch Name</th>
+                        <th>Date</th>
+                        <th>Original Product</th>
+                        <th>Original Quantity</th>
+                        <th>Exchange Product</th>
+                        <th>Exchange Quantity</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Branch</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="exchangeTableBody">
-                    <!-- Sample exchange data -->
-                    <tr>
-                        <td>SL001</td>
-                        <td>P101</td>
-                        <td>Cotton T-Shirt</td>
-                        <td>2</td>
-                        <td>P102</td>
-                        <td>Polo T-Shirt</td>
-                        <td>1</td>
-                        <td>Banani Branch</td>
-                    </tr>
-                    <tr>
-                        <td>SL002</td>
-                        <td>P103</td>
-                        <td>Denim Jeans</td>
-                        <td>1</td>
-                        <td>P104</td>
-                        <td>Cargo Pants</td>
-                        <td>1</td>
-                        <td>Shaymoli Branch</td>
-                    </tr>
-                    <tr>
-                        <td>SL003</td>
-                        <td>P105</td>
-                        <td>Formal Shirt</td>
-                        <td>1</td>
-                        <td>P106</td>
-                        <td>Casual Shirt</td>
-                        <td>2</td>
-                        <td>Banani Branch</td>
-                    </tr>
-                    <!-- Add more rows as needed -->
+                    <!-- Exchange records will be populated dynamically -->
                 </tbody>
             </table>
         </div>
@@ -330,6 +301,99 @@
             
             new bootstrap.Modal(document.getElementById('exchangeModal')).show();
         }
+
+        function loadExchangeRequests() {
+            const exchangeRequests = JSON.parse(sessionStorage.getItem('exchangeRequests') || '[]');
+            const tbody = document.getElementById('exchangeTableBody');
+            tbody.innerHTML = '';
+
+            exchangeRequests.forEach(request => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${request.saleId}</td>
+                    <td>${request.date}</td>
+                    <td>${request.originalProduct.id} - ${request.originalProduct.name}</td>
+                    <td>${request.originalProduct.quantity}</td>
+                    <td>${request.exchangeProduct.id} - ${request.exchangeProduct.name}</td>
+                    <td>${request.exchangeProduct.quantity}</td>
+                    <td>${request.reason}</td>
+                    <td><span class="badge ${request.status === 'pending' ? 'bg-warning' : 'bg-success'}">${request.status}</span></td>
+                    <td>${request.outlet}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="showExchangeDetails('${request.exchangeId}')">
+                            View Details
+                        </button>
+                        ${request.status === 'pending' ? `
+                            <button class="btn btn-sm btn-success ms-1" onclick="approveExchange('${request.exchangeId}')">
+                                Approve
+                            </button>
+                        ` : ''}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            if (exchangeRequests.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="text-center text-muted">
+                            No exchange requests found
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function approveExchange(exchangeId) {
+            if (confirm('Are you sure you want to approve this exchange request?')) {
+                const exchangeRequests = JSON.parse(sessionStorage.getItem('exchangeRequests') || '[]');
+                const index = exchangeRequests.findIndex(r => r.exchangeId === exchangeId);
+                
+                if (index !== -1) {
+                    exchangeRequests[index].status = 'approved';
+                    sessionStorage.setItem('exchangeRequests', JSON.stringify(exchangeRequests));
+                    loadExchangeRequests(); // Reload the table
+                }
+            }
+        }
+
+        function showExchangeDetails(exchangeId) {
+            const exchangeRequests = JSON.parse(sessionStorage.getItem('exchangeRequests') || '[]');
+            const request = exchangeRequests.find(r => r.exchangeId === exchangeId);
+            
+            if (request) {
+                document.getElementById('returningProduct').value = `${request.originalProduct.id} - ${request.originalProduct.name}`;
+                document.getElementById('returningQuantity').value = request.originalProduct.quantity;
+                document.getElementById('exchangingProduct').value = `${request.exchangeProduct.id} - ${request.exchangeProduct.name}`;
+                document.getElementById('exchangingQuantity').value = request.exchangeProduct.quantity;
+                document.getElementById('branchName').value = request.outlet;
+                
+                // Add reason to modal if not already present
+                const reasonInput = document.getElementById('exchangeReason');
+                if (!reasonInput) {
+                    const reasonDiv = document.createElement('div');
+                    reasonDiv.className = 'exchange-form-group';
+                    reasonDiv.innerHTML = `
+                        <label>Reason for Exchange:</label>
+                        <textarea class="form-control" id="exchangeReason" readonly>${request.reason}</textarea>
+                    `;
+                    document.querySelector('#exchangeForm').appendChild(reasonDiv);
+                } else {
+                    reasonInput.value = request.reason;
+                }
+                
+                new bootstrap.Modal(document.getElementById('exchangeModal')).show();
+            }
+        }
+
+        // Load exchange requests when page loads
+        window.onload = function() {
+            if (sessionStorage.getItem('userType') !== 'admin') {
+                window.location.replace('index.html');
+                return;
+            }
+            loadExchangeRequests();
+        };
     </script>
 </body>
 </html> 

@@ -198,19 +198,21 @@
                 pointNo: pointNo,
                 date: new Date().toISOString().split('T')[0],
                 productId: document.getElementById('productId').value,
-                quantity: document.getElementById('quantity').value,
-                price: document.getElementById('price').value,
-                netPrice: document.getElementById('netPrice').value
+                quantity: parseInt(document.getElementById('quantity').value),
+                price: parseFloat(document.getElementById('price').value),
+                netPrice: parseFloat(document.getElementById('netPrice').value),
+                totalAmount: parseFloat(document.getElementById('netPrice').value), // Add this for consistency
+                outlet: 'Shyamoli' // Add outlet information
             };
             
-            // Get existing sales history or initialize new array
-            let salesHistory = JSON.parse(sessionStorage.getItem('salesHistory') || '[]');
+            // Get existing outlet data or initialize
+            const outletData = JSON.parse(sessionStorage.getItem('shyamoli') || '{"products": [], "salesHistory": []}');
             
-            // Add new sales record
-            salesHistory.push(salesData);
+            // Add new sales record to outlet's salesHistory
+            outletData.salesHistory.push(salesData);
             
-            // Save updated history
-            sessionStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+            // Save updated outlet data
+            sessionStorage.setItem('shyamoli', JSON.stringify(outletData));
             
             // Show success popup
             const popup = document.getElementById('successPopup');
@@ -219,7 +221,7 @@
             // Redirect after delay
             setTimeout(() => {
                 popup.style.display = 'none';
-                window.location.href = 'sales-point.html';
+                window.location.href = 'shyamoli-sales-point.html';
             }, 2000);
         }
     </script>

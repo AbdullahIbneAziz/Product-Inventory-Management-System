@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shyamoli Sales Report Details</title>
+    <title>Shyamoli Sales Point Records</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .navbar {
@@ -15,23 +15,66 @@
             height: auto;
         }
 
-        .report-container {
-            max-width: 600px;
+        .sales-container {
+            max-width: 800px;
             margin: 50px auto;
-            padding: 30px;
+            padding: 20px;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
-        .print-btn, .exchange-btn {
-            margin-top: 20px;
+        .sales-record {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        @media print {
-            .no-print {
-                display: none;
-            }
+        .view-btn, .delete-btn {
+            padding: 5px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .view-btn {
+            background-color: #2c3e50;
+        }
+
+        .view-btn:hover {
+            background-color: #34495e;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .back-btn {
+            margin-bottom: 20px;
+        }
+
+        .record-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .outlet-badge {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            display: inline-block;
         }
     </style>
 </head>
@@ -40,31 +83,20 @@
         <div class="container">
             <a class="navbar-brand" href="#">
                 <img src="img/image.jpg" alt="Logo">
-                Shyamoli Outlet - Sales Report
+                Shyamoli Sales Records
             </a>
             <div class="d-flex">
-                <button class="btn btn-outline-light no-print" onclick="logout()">Logout</button>
+                <button class="btn btn-outline-light" onclick="logout()">Logout</button>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="report-container">
-            <button class="btn btn-secondary back-btn no-print" onclick="window.location.href='shyamoli-sales-point.html'">
-                Back to Sales Points
-            </button>
-            
-            <div id="reportContent">
-                <!-- Report content will be loaded here -->
-            </div>
-
-            <div class="d-flex gap-2 mt-3">
-                <button class="btn btn-warning exchange-btn no-print" onclick="showExchangeModal()">
-                    Exchange Products
-                </button>
-                <button class="btn btn-primary print-btn no-print" onclick="window.print()">
-                    Print Report
-                </button>
+        <div class="sales-container">
+            <button class="btn btn-secondary back-btn" onclick="window.location.href='shyamoli-outlet.html'">Back</button>
+            <h2 class="mb-4">Sales Point Records - Shyamoli Outlet</h2>
+            <div id="salesRecords">
+                <!-- Sales records will be added here dynamically -->
             </div>
         </div>
     </div>
@@ -111,55 +143,105 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="session.js"></script>
     <script>
-        // Define products for Shyamoli outlet
+        // Check if logged in as Shyamoli outlet
+        if (sessionStorage.getItem('outletType') !== 'shyamoli') {
+            window.location.replace('index.html');
+        }
+
         const products = {
             'P001': { name: 'Cotton T-Shirt', price: 599 },
             'P002': { name: 'Denim Jeans', price: 1299 },
             'P004': { name: 'Casual Shirt', price: 899 }
         };
 
-        function loadReport() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const pointNo = urlParams.get('point');
-            
-            const outletData = JSON.parse(sessionStorage.getItem('shyamoli') || '{"products": [], "salesHistory": []}');
-            const report = outletData.salesHistory.find(sale => sale.pointNo === pointNo);
-            
-            if (report) {
-                document.getElementById('reportContent').innerHTML = `
-                    <h3>Sales Report - ${report.pointNo}</h3>
-                    <p>Date: ${report.date}</p>
-                    <hr>
-                    <p>Product ID: ${report.productId}</p>
-                    <p>Quantity: ${report.quantity}</p>
-                    <p>Unit Price: ৳${report.price}</p>
-                    <p>Net Price: ৳${report.netPrice}</p>
-                    <p>Outlet: ${report.outlet}</p>
-                `;
-            } else {
-                document.getElementById('reportContent').innerHTML = `
-                    <div class="alert alert-warning">
-                        Report not found
+        function addSalesRecord(pointNo, date, totalAmount) {
+            const recordDiv = document.createElement('div');
+            recordDiv.className = 'sales-record';
+            recordDiv.setAttribute('data-point-no', pointNo);
+            recordDiv.innerHTML = `
+                <div>
+                    <span class="outlet-badge">Shyamoli Outlet</span>
+                    <div>
+                        <strong>Sales Point No:</strong> ${pointNo}
+                        <br>
+                        <small>Generated on: ${date}</small>
+                        <br>
+                        <strong>Total Amount:</strong> ৳${totalAmount.toFixed(2)}
                     </div>
-                `;
+                </div>
+                <div class="record-buttons">
+                    <button class="btn btn-primary view-btn" onclick="viewSalesReport('${pointNo}')">View</button>
+                    <button class="btn btn-warning exchange-btn" onclick="showExchangeModal('${pointNo}')">Exchange</button>
+                    <button class="btn btn-danger delete-btn" onclick="deleteSalesRecord('${pointNo}')">Delete</button>
+                </div>
+            `;
+            document.getElementById('salesRecords').appendChild(recordDiv);
+        }
+
+        function viewSalesReport(pointNo) {
+            window.location.href = `shyamoli-sales-report.html?point=${pointNo}`;
+        }
+
+        function deleteSalesRecord(pointNo) {
+            if (confirm('Are you sure you want to delete this sales record?')) {
+                const outletData = JSON.parse(sessionStorage.getItem('shyamoli') || '{"products": [], "salesHistory": []}');
+                const index = outletData.salesHistory.findIndex(sale => sale.pointNo === pointNo);
+                
+                if (index !== -1) {
+                    outletData.salesHistory.splice(index, 1);
+                    sessionStorage.setItem('shyamoli', JSON.stringify(outletData));
+                    
+                    const recordToDelete = document.querySelector(`[data-point-no="${pointNo}"]`);
+                    if (recordToDelete) {
+                        recordToDelete.remove();
+                    }
+
+                    if (outletData.salesHistory.length === 0) {
+                        document.getElementById('salesRecords').innerHTML = `
+                            <div class="text-center text-muted">
+                                <p>No sales records found for Shyamoli outlet</p>
+                            </div>
+                        `;
+                    }
+                }
             }
         }
 
-        function showExchangeModal() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const pointNo = urlParams.get('point');
+        // Load sales records on page load
+        window.onload = function() {
+            const outletData = JSON.parse(sessionStorage.getItem('shyamoli') || '{"products": [], "salesHistory": []}');
+            const salesHistory = outletData.salesHistory;
+            
+            document.getElementById('salesRecords').innerHTML = '';
+            
+            if (salesHistory.length === 0) {
+                document.getElementById('salesRecords').innerHTML = `
+                    <div class="text-center text-muted">
+                        <p>No sales records found for Shyamoli outlet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            salesHistory.forEach(sale => {
+                addSalesRecord(sale.pointNo, sale.date, sale.totalAmount || 0);
+            });
+        }
+
+        function showExchangeModal(pointNo) {
             const outletData = JSON.parse(sessionStorage.getItem('shyamoli') || '{"products": [], "salesHistory": []}');
             const sale = outletData.salesHistory.find(s => s.pointNo === pointNo);
 
             if (sale) {
                 document.getElementById('currentProduct').value = `${sale.productId} - ${products[sale.productId].name}`;
                 document.getElementById('currentQuantity').value = sale.quantity;
+                document.getElementById('currentProduct').dataset.pointNo = pointNo; // Store pointNo for later use
 
                 // Populate exchange product options
                 const exchangeSelect = document.getElementById('exchangeProduct');
                 exchangeSelect.innerHTML = '<option value="">Select Product</option>';
                 Object.entries(products).forEach(([id, product]) => {
-                    if (id !== sale.productId) { // Don't show current product
+                    if (id !== sale.productId) {
                         exchangeSelect.add(new Option(`${id} - ${product.name}`, id));
                     }
                 });
@@ -171,8 +253,7 @@
         function handleExchange(event) {
             event.preventDefault();
             
-            const urlParams = new URLSearchParams(window.location.search);
-            const pointNo = urlParams.get('point');
+            const pointNo = document.getElementById('currentProduct').dataset.pointNo;
             const outletData = JSON.parse(sessionStorage.getItem('shyamoli') || '{"products": [], "salesHistory": []}');
             const sale = outletData.salesHistory.find(s => s.pointNo === pointNo);
 
@@ -203,10 +284,8 @@
             // Close modal and show success message
             bootstrap.Modal.getInstance(document.getElementById('exchangeModal')).hide();
             alert('Exchange request submitted successfully!');
-            window.location.href = 'shyamoli-outlet.html';
+            window.location.reload();
         }
-
-        window.onload = loadReport;
     </script>
 </body>
 </html> 

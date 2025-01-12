@@ -198,6 +198,7 @@
                         <th>Shipment ID</th>
                         <th>Supplier</th>
                         <th>Product Name</th>
+                        <th>Product ID</th>
                         <th>Quantity</th>
                         <th>Payment Method</th>
                         <th>Payment Status</th>
@@ -231,6 +232,7 @@
                     <td>${order.shipmentId}</td>
                     <td>${order.supplier}</td>
                     <td>${order.productName}</td>
+                    <td>${order.productId || 'N/A'}</td>
                     <td>${order.quantity}</td>
                     <td>${order.paymentMethod}</td>
                     <td>${order.paymentStatus}</td>
@@ -270,11 +272,47 @@
             const order = orders.find(o => o.shipmentId === shipmentId);
             if (order) {
                 order.shipmentStatus = newStatus;
-                order.statusLocked = true; // Add lock flag
-                order.lastUpdated = new Date().toLocaleString(); // Add timestamp
+                order.statusLocked = true;
+                order.lastUpdated = new Date().toLocaleString();
                 localStorage.setItem('supplierOrders', JSON.stringify(orders));
-                updateTable(); // Refresh the table to show changes
+
+                // If status is "Completed", update product list
+                if (newStatus === 'Completed') {
+                    updateProductList(order);
+                }
+
+                updateTable();
             }
+        }
+
+        function updateProductList(order) {
+            // Get existing products
+            let products = JSON.parse(localStorage.getItem('productList')) || [];
+            
+            // Find if product already exists
+            const existingProduct = products.find(p => p.productId === order.productId);
+            
+            if (existingProduct) {
+                // Update existing product
+                existingProduct.quantity = parseInt(existingProduct.quantity) + parseInt(order.quantity);
+                existingProduct.lastUpdated = new Date().toLocaleString();
+            } else {
+                // Create new product entry
+                const newProduct = {
+                    productId: order.productId,
+                    productName: order.productName,
+                    quantity: parseInt(order.quantity),
+                    supplier: order.supplier,
+                    lastUpdated: new Date().toLocaleString()
+                };
+                products.push(newProduct);
+            }
+            
+            // Save updated product list
+            localStorage.setItem('productList', JSON.stringify(products));
+            
+            // Show success message
+            alert(`Product list has been ${existingProduct ? 'updated' : 'created'} successfully!`);
         }
 
         function viewOrder(shipmentId) {
@@ -286,6 +324,7 @@
                         <p><strong>Shipment ID:</strong> ${order.shipmentId}</p>
                         <p><strong>Supplier:</strong> ${order.supplier}</p>
                         <p><strong>Product Name:</strong> ${order.productName}</p>
+                        <p><strong>Product ID:</strong> ${order.productId || 'N/A'}</p>
                         <p><strong>Quantity:</strong> ${order.quantity}</p>
                         <p><strong>Payment Method:</strong> ${order.paymentMethod}</p>
                         <p><strong>Payment Status:</strong> ${order.paymentStatus}</p>

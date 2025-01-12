@@ -187,32 +187,11 @@
                         <th>Quantity</th>
                         <th>Unit Price</th>
                         <th>Supplier</th>
+                        <th>Last Updated</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Sample data - You can populate this dynamically -->
-                    <tr>
-                        <td>P001</td>
-                        <td>Product 1</td>
-                        <td>100</td>
-                        <td>$19.99</td>
-                        <td>Supplier A</td>
-                    </tr>
-                    <tr>
-                        <td>P002</td>
-                        <td>Product 2</td>
-                        <td>75</td>
-                        <td>$24.99</td>
-                        <td>Supplier B</td>
-                    </tr>
-                    <tr>
-                        <td>P003</td>
-                        <td>Product 3</td>
-                        <td>50</td>
-                        <td>$29.99</td>
-                        <td>Supplier C</td>
-                    </tr>
-                    <!-- Add more rows as needed -->
+                    <!-- Products will be loaded dynamically -->
                 </tbody>
             </table>
         </div>
@@ -226,28 +205,48 @@
 
         // Function to load and display products
         function loadProducts() {
-            const outletType = sessionStorage.getItem('outletType');
-            const outletData = JSON.parse(sessionStorage.getItem(outletType) || '{"products": [], "salesHistory": []}');
-            const products = outletData.products;
+            const products = JSON.parse(localStorage.getItem('productList')) || [];
             
             const tbody = document.querySelector('tbody');
             tbody.innerHTML = ''; // Clear existing rows
 
+            if (products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">No products found</td>
+                    </tr>
+                `;
+                return;
+            }
+
             products.forEach(product => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${product.id}</td>
-                    <td>${product.name}</td>
+                    <td>${product.productId}</td>
+                    <td>${product.productName}</td>
                     <td>${product.quantity}</td>
-                    <td>৳${product.unitPrice.toFixed(2)}</td>
+                    <td>${product.unitPrice ? '৳' + product.unitPrice.toFixed(2) : 'N/A'}</td>
                     <td>${product.supplier}</td>
+                    <td>${product.lastUpdated}</td>
                 `;
                 tbody.appendChild(row);
             });
         }
 
-        // Load products when page loads
-        window.addEventListener('load', loadProducts);
+        // Add function to handle real-time updates
+        function initializeProductUpdates() {
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'productList') {
+                    loadProducts();
+                }
+            });
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            loadProducts();
+            initializeProductUpdates();
+        });
     </script>
 </body>
 </html> 
