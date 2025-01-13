@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banani Sales Point Records</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar {
+            background-color: #2c3e50;
+        }
+        
+        .navbar-brand img {
+            width: 100px;
+            height: auto;
+        }
+        
+        .sales-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sales-record {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .view-btn,
+        .delete-btn {
+            padding: 5px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+        
+        .view-btn {
+            background-color: #2c3e50;
+        }
+        
+        .view-btn:hover {
+            background-color: #34495e;
+        }
+        
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .back-btn {
+            margin-bottom: 20px;
+        }
+        
+        .record-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .outlet-badge {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .print-btn {
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .print-btn:hover {
+            background-color: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media print {
+            .navbar,
+            .back-btn,
+            .print-btn,
+            .edit-btn,
+            .btn-outline-light {
+                display: none !important;
+            }
+            .sales-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+            }
+            .sales-record {
+                break-inside: avoid;
+                border: 1px solid #ddd;
+            }
+            body {
+                background-color: white;
+            }
+            .record-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="../images/image.jpg" alt="Logo"> Banani Sales Records
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="sales-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <button class="btn btn-secondary back-btn" onclick="window.location.href='banani-outlet.html'">Back</button>
+                <button class="btn btn-primary print-btn" onclick="printSalesRecords()">
+                    <i class="fas fa-print"></i> Print Records
+                </button>
+            </div>
+            <h2 class="mb-4">Sales Point Records - Banani Outlet</h2>
+            <div id="salesRecords">
+                <!-- Sales records will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Exchange Modal -->
+    <div class="modal fade" id="exchangeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Product Exchange Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="exchangeForm" onsubmit="handleExchange(event)">
+                        <div class="mb-3">
+                            <label class="form-label">Current Product</label>
+                            <input type="text" class="form-control" id="currentProduct" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Current Quantity</label>
+                            <input type="number" class="form-control" id="currentQuantity" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Exchange Product</label>
+                            <select class="form-control" id="exchangeProduct" required>
+                                <option value="">Select Product</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Exchange Quantity</label>
+                            <input type="number" class="form-control" id="exchangeQuantity" required min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reason for Exchange</label>
+                            <textarea class="form-control" id="exchangeReason" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Exchange Request</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this modal for editing sales -->
+    <div class="modal fade" id="editSaleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Sale Record</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSaleForm" onsubmit="handleSaleEdit(event)">
+                        <input type="hidden" id="editSaleId">
+                        <div class="mb-3">
+                            <label class="form-label">Product Name</label>
+                            <select class="form-select" id="editProductName" required onchange="updateEditPrice()">
+                                <option value="">Select Product</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Available Quantity</label>
+                            <input type="number" class="form-control" id="editAvailableQuantity" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="editQuantity" min="1" required 
+                                   onchange="calculateEditNetPrice()">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Unit Price</label>
+                            <input type="number" class="form-control" id="editUnitPrice" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Net Price</label>
+                            <input type="number" class="form-control" id="editNetPrice" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Sale</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../javascript/session.js"></script>
+    <script>
+        // Check if logged in as Banani outlet
+        if (sessionStorage.getItem('outletType') !== 'banani') {
+            window.location.replace('../HTML/index.html');
+        }
+
+        let products = [];
+
+        async function loadSalesRecords() {
+            try {
+                const response = await fetch('../php/get_sales_records.php?outlet=Banani');
+                const data = await response.json();
+
+                if (data.success) {
+                    const salesRecords = document.getElementById('salesRecords');
+                    salesRecords.innerHTML = '';
+
+                    if (data.sales.length === 0) {
+                        salesRecords.innerHTML = `
+                            <div class="text-center text-muted">
+                                <p>No sales records found for Banani outlet</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    data.sales.forEach(sale => {
+                        addSalesRecord(sale);
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error loading sales records');
+            }
+        }
+
+        function addSalesRecord(sale) {
+            const recordDiv = document.createElement('div');
+            recordDiv.className = 'sales-record';
+            recordDiv.setAttribute('data-sale-id', sale.id);
+            recordDiv.innerHTML = `
+                <div>
+                    <span class="outlet-badge">Banani Outlet</span>
+                    <div>
+                        <strong>Product:</strong> ${sale.product_name}
+                        <br>
+                        <strong>Quantity:</strong> ${sale.quantity}
+                        <br>
+                        <strong>Total Amount:</strong> ৳${sale.net_price}
+                        <br>
+                        <small>Date: ${sale.sale_date}</small>
+                    </div>
+                </div>
+                <div class="record-buttons">
+                    <button class="btn btn-primary edit-btn" onclick="showEditModal(${sale.id})">Edit</button>
+                </div>
+            `;
+            document.getElementById('salesRecords').appendChild(recordDiv);
+        }
+
+        async function showEditModal(saleId) {
+            try {
+                // Get current sale details first
+                const saleResponse = await fetch(`../php/get_sale.php?id=${saleId}`);
+                const saleData = await saleResponse.json();
+
+                if (!saleData.success) {
+                    throw new Error(saleData.error || 'Failed to load sale data');
+                }
+
+                const sale = saleData.sale;
+
+                // Load products with current stock
+                const productResponse = await fetch('../php/get_products_for_sales.php?branch=Banani');
+                const productData = await productResponse.json();
+
+                if (productData.success) {
+                    products = productData.products;
+                    const select = document.getElementById('editProductName');
+                    select.innerHTML = '<option value="">Select Product</option>' +
+                        products.map(product =>
+                            `<option value="${product.id}">${product.name} (Sizes: ${product.sizes})</option>`
+                        ).join('');
+
+                    // Store the original product ID for reference
+                    document.getElementById('editSaleId').value = sale.id;
+                    document.getElementById('editSaleId').dataset.originalProductId = sale.product_id;
+                    document.getElementById('editProductName').value = sale.product_id;
+                    
+                    // Find the product to get available quantity
+                    const product = products.find(p => p.id === sale.product_id);
+                    if (product) {
+                        // Get the actual current stock quantity
+                        const currentStock = parseInt(product.available_quantity);
+                        
+                        // Store original sale quantity for reference
+                        document.getElementById('editQuantity').dataset.originalQuantity = sale.quantity;
+                        
+                        // Set available quantity and current quantity
+                        document.getElementById('editAvailableQuantity').value = currentStock;
+                        document.getElementById('editQuantity').value = sale.quantity;
+                        document.getElementById('editQuantity').max = currentStock;
+                        
+                        // Set price information
+                        document.getElementById('editUnitPrice').value = sale.unit_price;
+                        document.getElementById('editNetPrice').value = sale.net_price;
+                    }
+
+                    new bootstrap.Modal(document.getElementById('editSaleModal')).show();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error loading data for editing: ' + error.message);
+            }
+        }
+
+        function handleExchange(event) {
+            event.preventDefault();
+
+            const pointNo = document.getElementById('currentProduct').dataset.pointNo;
+            const outletData = JSON.parse(sessionStorage.getItem('banani') || '{"products": [], "salesHistory": []}');
+            const sale = outletData.salesHistory.find(s => s.pointNo === pointNo);
+
+            const exchangeData = {
+                exchangeId: 'EX' + Date.now(),
+                saleId: pointNo,
+                date: new Date().toISOString().split('T')[0],
+                originalProduct: {
+                    id: sale.productId,
+                    name: products[sale.productId].name,
+                    quantity: sale.quantity
+                },
+                exchangeProduct: {
+                    id: document.getElementById('exchangeProduct').value,
+                    name: products[document.getElementById('exchangeProduct').value].name,
+                    quantity: parseInt(document.getElementById('exchangeQuantity').value)
+                },
+                reason: document.getElementById('exchangeReason').value,
+                status: 'pending',
+                outlet: 'Banani'
+            };
+
+            // Store exchange request
+            let exchangeRequests = JSON.parse(sessionStorage.getItem('exchangeRequests') || '[]');
+            exchangeRequests.push(exchangeData);
+            sessionStorage.setItem('exchangeRequests', JSON.stringify(exchangeRequests));
+
+            // Close modal and show success message
+            bootstrap.Modal.getInstance(document.getElementById('exchangeModal')).hide();
+            alert('Exchange request submitted successfully!');
+            window.location.reload();
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('../php/get_products_for_sales.php');
+                const data = await response.json();
+                if (data.success) {
+                    products = data.products;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function updateEditPrice() {
+            const productId = document.getElementById('editProductName').value;
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('editUnitPrice').value = product.unit_price;
+                calculateEditNetPrice();
+            }
+        }
+
+        function calculateEditNetPrice() {
+            const quantity = document.getElementById('editQuantity').value;
+            const unitPrice = document.getElementById('editUnitPrice').value;
+            const netPrice = quantity * unitPrice;
+            document.getElementById('editNetPrice').value = netPrice;
+        }
+
+        async function handleSaleEdit(event) {
+            event.preventDefault();
+
+            const saleId = document.getElementById('editSaleId').value;
+            const productId = document.getElementById('editProductName').value;
+            const product = products.find(p => p.id === productId);
+
+            const saleData = {
+                id: saleId,
+                productId: productId,
+                productName: product.name,
+                quantity: parseInt(document.getElementById('editQuantity').value),
+                unitPrice: parseFloat(document.getElementById('editUnitPrice').value),
+                netPrice: parseFloat(document.getElementById('editNetPrice').value),
+                outlet: 'Banani'
+            };
+
+            try {
+                const response = await fetch('../php/update_sale.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(saleData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('editSaleModal')).hide();
+                    await loadSalesRecords(); // Refresh the sales list
+                    alert('Sale updated successfully!');
+                } else {
+                    throw new Error(data.error || 'Failed to update sale');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating sale: ' + error.message);
+            }
+        }
+
+        function printSalesRecords() {
+            window.print();
+        }
+
+        // Load products when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            loadSalesRecords();
+        });
+
+        // Update quantity validation
+        document.getElementById('editQuantity').addEventListener('input', function() {
+            const availableQty = parseInt(document.getElementById('editAvailableQuantity').value);
+            const enteredQty = parseInt(this.value) || 0;
+            const originalProductId = document.getElementById('editSaleId').dataset.originalProductId;
+            const currentProductId = document.getElementById('editProductName').value;
+            const originalQuantity = parseInt(document.getElementById('editQuantity').dataset.originalQuantity) || 0;
+            
+            // Adjust available quantity if it's the same product
+            const maxQty = currentProductId === originalProductId ? 
+                availableQty + originalQuantity : 
+                availableQty;
+            
+            if (enteredQty <= 0) {
+                alert('Quantity must be greater than 0');
+                this.value = 1;
+            } else if (enteredQty > maxQty) {
+                alert('Quantity cannot exceed available stock');
+                this.value = maxQty;
+            }
+            calculateEditNetPrice();
+        });
+
+        // Update the product change handler
+        document.getElementById('editProductName').addEventListener('change', function() {
+            const productId = this.value;
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                const originalProductId = document.getElementById('editSaleId').dataset.originalProductId;
+                const originalQuantity = parseInt(document.getElementById('editQuantity').dataset.originalQuantity) || 0;
+                
+                // If same product as original sale, add back the original quantity
+                const availableQty = productId === originalProductId ? 
+                    parseInt(product.available_quantity) + originalQuantity :
+                    parseInt(product.available_quantity);
+
+                document.getElementById('editAvailableQuantity').value = availableQty;
+                document.getElementById('editQuantity').max = availableQty;
+                document.getElementById('editUnitPrice').value = product.unit_price;
+                calculateEditNetPrice();
+            }
+        });
+    </script>
+</body>
+
+</html>

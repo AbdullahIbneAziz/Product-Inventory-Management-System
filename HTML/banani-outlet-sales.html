@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report - Banani Outlet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        .navbar {
+            background-color: #2c3e50;
+        }
+        
+        .navbar-brand img {
+            width: 100px;
+            height: auto;
+        }
+        
+        .sales-form {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .confirm-btn {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .confirm-btn:hover {
+            background-color: #34495e;
+            transform: translateY(-2px);
+        }
+        
+        .back-btn {
+            margin-bottom: 20px;
+        }
+        
+        .success-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 1000;
+        }
+        
+        .success-popup h4 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        @media print {
+            .back-btn,
+            .btn-outline-light {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="../images/image.jpg" alt="Logo"> Banani Outlet
+            </a>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <button class="btn btn-secondary back-btn" onclick="window.location.href='../HTML/banani-outlet.html'">
+            Back to Dashboard
+        </button>
+
+        <div class="sales-form">
+            <h3 class="mb-4">Sales Report</h3>
+            <form id="salesForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Product Name</label>
+                    <select class="form-select" id="productName" onchange="updateProductDetails()" required>
+                        <option value="">Select Product</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Available Quantity</label>
+                    <input type="number" class="form-control" id="availableQuantity" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" class="form-control" id="quantity" min="1" onchange="calculateNetPrice()" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Unit Price</label>
+                    <input type="number" class="form-control" id="price" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Net Price</label>
+                    <input type="number" class="form-control" id="netPrice" readonly>
+                </div>
+
+                <button type="submit" class="confirm-btn">Confirm</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="success-popup" id="successPopup">
+        <h4>Sales Report Generated<br>Successfully</h4>
+    </div>
+
+    <script>
+        window.onload = function() {
+            if (!sessionStorage.getItem('loggedIn') || sessionStorage.getItem('outletType') !== 'banani') {
+                window.location.replace('../HTML/index.html');
+            }
+        }
+
+        window.onpopstate = function() {
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.replace('../HTML/index.html');
+            }
+        }
+
+        let products = [];
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('../php/get_products_for_sales.php?branch=Banani');
+                const data = await response.json();
+
+                if (data.success) {
+                    products = data.products;
+                    const select = document.getElementById('productName');
+                    select.innerHTML = '<option value="">Select Product</option>' +
+                        products.map(product =>
+                            `<option value="${product.id}">${product.name} (Sizes: ${product.sizes})</option>`
+                        ).join('');
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                alert('Error loading products');
+            }
+        }
+
+        function updateProductDetails() {
+            const productId = document.getElementById('productName').value;
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('price').value = product.unit_price;
+                document.getElementById('availableQuantity').value = product.available_quantity;
+                document.getElementById('quantity').max = product.available_quantity;
+                calculateNetPrice();
+            }
+        }
+
+        function calculateNetPrice() {
+            const quantity = document.getElementById('quantity').value;
+            const price = document.getElementById('price').value;
+            const netPrice = quantity * price;
+            document.getElementById('netPrice').value = netPrice;
+        }
+
+        document.getElementById('quantity').addEventListener('input', function() {
+            const availableQty = parseInt(document.getElementById('availableQuantity').value);
+            const enteredQty = parseInt(this.value);
+            
+            if (enteredQty > availableQty) {
+                alert('Quantity cannot exceed available stock');
+                this.value = availableQty;
+            }
+            calculateNetPrice();
+        });
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            const productId = document.getElementById('productName').value;
+            const product = products.find(p => p.id === productId);
+
+            const salesData = {
+                date: document.querySelector('input[type="date"]').value,
+                productId: productId,
+                productName: product.name,
+                quantity: parseInt(document.getElementById('quantity').value),
+                price: parseFloat(document.getElementById('price').value),
+                netPrice: parseFloat(document.getElementById('netPrice').value),
+                outlet: 'Banani'
+            };
+
+            try {
+                const response = await fetch('../php/save_sale.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(salesData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const popup = document.getElementById('successPopup');
+                    popup.style.display = 'block';
+
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                        window.location.href = '../HTML/banani-sales-point.html';
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Failed to save sale');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving sale: ' + error.message);
+            }
+        }
+
+        // Load products when page loads
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

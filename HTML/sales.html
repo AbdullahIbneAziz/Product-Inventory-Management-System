@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: #2c3e50;
+        }
+        
+        .navbar-brand img {
+            width: 100px;
+            height: auto;
+        }
+        
+        .admin-dropdown {
+            cursor: pointer;
+        }
+        
+        .nav-link {
+            color: white !important;
+            margin: 0 10px;
+        }
+        
+        .nav-link:hover {
+            color: #ddd !important;
+        }
+        
+        .nav-link.active {
+            font-weight: bold;
+            border-bottom: 2px solid white;
+        }
+        
+        .main-content {
+            padding: 30px 0;
+        }
+        
+        .table-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+        }
+        
+        .print-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            margin-top: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: 0;
+        }
+        
+        .print-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+        
+        .total-row td {
+            border-top: 2px solid #dee2e6;
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .table-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+            }
+            .main-content {
+                padding: 0;
+                margin-top: 120px;
+            }
+            body {
+                background-color: white;
+            }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 30px;
+            margin: 0 auto;
+            padding: 10px 0;
+        }
+        
+        .nav-button {
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .print-btn {
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .print-btn:hover {
+            background-color: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media print {
+            .navbar,
+            .print-btn,
+            .form-select,
+            .btn-outline-light,
+            .btn-secondary {
+                display: none !important;
+            }
+            .table-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+            }
+            .table {
+                border: 1px solid #dee2e6;
+            }
+            .table th,
+            .table td {
+                border: 1px solid #dee2e6;
+            }
+            body {
+                background-color: white;
+            }
+            .main-content {
+                padding: 0;
+                margin-top: 120px;
+            }
+            /* Add print header */
+            .print-header {
+                display: block !important;
+                text-align: left;
+                margin-bottom: 20px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 20px;
+                background: white;
+            }
+            .print-header img {
+                width: 100px;
+                height: auto;
+            }
+            .print-header p {
+                margin-top: 10px;
+                margin-bottom: 0;
+            }
+        }
+        /* Hide print header by default */
+        
+        .print-header {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Update the navbar section -->
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="row mb-4">
+            <div class="col-12">
+                <button class="btn btn-secondary" onclick="window.location.href='../HTML/inventory.html'">
+                    <i class="fas fa-arrow-left"></i> Back to Inventory
+                </button>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <select class="form-select" id="outletFilter" onchange="filterSales()">
+                    <option value="">All Outlets</option>
+                    <option value="Banani">Banani Outlet</option>
+                    <option value="Shyamoli">Shyamoli Outlet</option>
+                </select>
+            </div>
+            <div class="col-md-6 text-end">
+                <button class="btn btn-primary print-btn" onclick="printSalesRecords()">
+                    <i class="fas fa-print"></i> Print Records
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Outlet</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Net Price</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTableBody">
+                    <!-- Sales records will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add print header -->
+    <div class="print-header">
+        <img src="../images/image.jpg" alt="Logo">
+        <p id="printDate"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function logout() {
+            window.location.href = '../HTML/index.html';
+        }
+
+        function printReport(reportId) {
+            // Store the current document body
+            const originalBody = document.body.innerHTML;
+
+            // Get only the selected report
+            const reportContent = document.getElementById(reportId).innerHTML;
+
+            // Replace body content with just the report
+            document.body.innerHTML = `
+                <div class="container">
+                    <div class="table-container">
+                        ${reportContent}
+                    </div>
+                </div>
+            `;
+
+            // Print
+            window.print();
+
+            // Restore original content
+            document.body.innerHTML = originalBody;
+
+            // Reattach event listeners
+            attachEventListeners();
+        }
+
+        function attachEventListeners() {
+            // Reattach logout event listener
+            document.querySelector('.dropdown-item').onclick = logout;
+
+            // Reattach print buttons event listeners
+            document.querySelectorAll('.print-btn').forEach(btn => {
+                const reportId = btn.closest('.table-container').id;
+                btn.onclick = () => printReport(reportId);
+            });
+        }
+
+        async function loadSales(outlet = '') {
+            try {
+                const response = await fetch(`../php/get_sales_records.php${outlet ? '?outlet=' + outlet : ''}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const tbody = document.getElementById('salesTableBody');
+                    tbody.innerHTML = '';
+
+                    data.sales.forEach(sale => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>${sale.sale_date}</td>
+                            <td>${sale.outlet}</td>
+                            <td>${sale.product_name}</td>
+                            <td>${sale.quantity}</td>
+                            <td>৳${sale.unit_price}</td>
+                            <td>৳${sale.net_price}</td>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error loading sales data');
+            }
+        }
+
+        function filterSales() {
+            const outlet = document.getElementById('outletFilter').value;
+            loadSales(outlet);
+        }
+
+        // Load all sales when page loads
+        document.addEventListener('DOMContentLoaded', () => loadSales());
+
+        function printSalesRecords() {
+            // Update print date
+            document.getElementById('printDate').textContent =
+                'Generated on: ' + new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+            window.print();
+        }
+    </script>
+</body>
+
+</html>

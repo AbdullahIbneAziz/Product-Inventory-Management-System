@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Stock - Banani Outlet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: #2c3e50;
+        }
+        
+        .navbar-brand img {
+            width: 100px;
+            height: auto;
+        }
+        
+        .main-content {
+            padding-top: 10px;
+        }
+        
+        .request-form {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-top: 15px;
+        }
+        
+        .item-row {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .remove-item {
+            color: #dc3545;
+            cursor: pointer;
+        }
+        
+        .urgency-high {
+            color: #dc3545;
+        }
+        
+        .urgency-medium {
+            color: #ffc107;
+        }
+        
+        .urgency-low {
+            color: #28a745;
+        }
+        
+        .back-button {
+            margin: 20px 30px;
+            padding: 8px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+        
+        .back-button i {
+            font-size: 14px;
+        }
+        
+        .request-form {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="../images/image.jpg" alt="Logo"> Banani Outlet
+            </a>
+        </div>
+    </nav>
+
+    <button onclick="window.location.href='banani-outlet.html'" class="back-button">Back</button>
+
+    <div class="container main-content">
+        <div class="request-form">
+            <h3 class="mb-4" style="color: #2c3e50;">Request Stock</h3>
+
+            <form id="stockRequestForm" onsubmit="submitRequest(event)">
+                <div id="itemsList">
+                    <div class="item-row">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Product Name</label>
+                                <select class="form-control" name="productName[]" required>
+                                    <option value="">Select Product</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control" name="quantity[]" min="1" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Size</label>
+                                <select class="form-select" name="size[]" required>
+                                    <option value="">Select Size</option>
+                                    <option value="S">Small</option>
+                                    <option value="M">Medium</option>
+                                    <option value="L">Large</option>
+                                    <option value="XL">Extra Large</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end mb-3">
+                                <span class="remove-item" onclick="removeItem(this)">
+                                    <i class="fas fa-times"></i> Remove
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-outline-primary mb-4" onclick="addItem()">
+                    + Add Another Item
+                </button>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Urgency Level</label>
+                        <select class="form-select" name="urgency" required>
+                            <option value="">Select Urgency</option>
+                            <option value="High" class="text-danger">High</option>
+                            <option value="Medium" class="text-warning">Medium</option>
+                            <option value="Low" class="text-success">Low</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='banani-outlet.html'">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../javascript/session.js"></script>
+    <script>
+        // Check if logged in as Banani outlet
+        if (sessionStorage.getItem('outletType') !== 'banani') {
+            window.location.replace('../HTML/index.html');
+        }
+
+        async function loadProductNames() {
+            try {
+                const response = await fetch('../php/get_product_names.php');
+                const data = await response.json();
+
+                if (data.success) {
+                    const productSelects = document.querySelectorAll('select[name="productName[]"]');
+                    const options = data.products.map(product =>
+                        `<option value="${product}">${product}</option>`
+                    ).join('');
+
+                    productSelects.forEach(select => {
+                        select.innerHTML = '<option value="">Select Product</option>' + options;
+                    });
+                } else {
+                    throw new Error(data.error || 'Failed to load products');
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                alert('Error loading product list: ' + error.message);
+            }
+        }
+
+        function addItem() {
+            const itemsList = document.getElementById('itemsList');
+            const newItem = itemsList.children[0].cloneNode(true);
+
+            // Clear input values but keep product options
+            newItem.querySelectorAll('input').forEach(input => {
+                input.value = '';
+            });
+            const productSelect = newItem.querySelector('select[name="productName[]"]');
+            productSelect.value = '';
+
+            itemsList.appendChild(newItem);
+        }
+
+        function removeItem(element) {
+            if (document.getElementById('itemsList').children.length > 1) {
+                element.closest('.item-row').remove();
+            }
+        }
+
+        async function submitRequest(event) {
+            event.preventDefault();
+
+            try {
+                const formData = new FormData(event.target);
+
+                // Validate form data
+                if (!formData.get('urgency')) {
+                    alert('Please select an urgency level');
+                    return;
+                }
+
+                const request = {
+                    id: 'BREQ' + Date.now(), // Added 'B' prefix for Banani requests
+                    date: new Date().toISOString().split('T')[0],
+                    branch: 'Banani',
+                    items: [],
+                    urgency: formData.get('urgency'),
+                    notes: formData.get('notes') || '',
+                    status: 'pending'
+                };
+
+                // Get all items
+                const productNames = formData.getAll('productName[]');
+                const quantities = formData.getAll('quantity[]');
+                const sizes = formData.getAll('size[]');
+
+                // Validate items
+                if (productNames.some(name => !name.trim())) {
+                    alert('Please fill in all product names');
+                    return;
+                }
+
+                for (let i = 0; i < productNames.length; i++) {
+                    if (!quantities[i] || !sizes[i]) {
+                        alert('Please fill in all quantities and sizes');
+                        return;
+                    }
+                    request.items.push({
+                        name: productNames[i].trim(),
+                        quantity: parseInt(quantities[i]),
+                        size: sizes[i]
+                    });
+                }
+
+                console.log('Sending request:', request); // Debug log
+
+                const response = await fetch('../php/save_banani_request.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(request)
+                });
+
+                const responseText = await response.text();
+                console.log('Raw response:', responseText); // Debug log
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('Failed to parse response:', e);
+                    throw new Error('Invalid response from server');
+                }
+
+                if (data.success) {
+                    alert('Stock request submitted successfully!');
+                    window.location.href = 'banani-outlet.html';
+                } else {
+                    throw new Error(data.error || 'Unknown error occurred');
+                }
+            } catch (error) {
+                console.error('Error details:', error);
+                alert('Error submitting request: ' + error.message);
+            }
+        }
+
+        // Call loadProductNames when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProductNames();
+            initializeOutletType();
+        });
+    </script>
+</body>
+
+</html>
