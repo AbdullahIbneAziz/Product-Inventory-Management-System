@@ -37,7 +37,7 @@ The system provides the following REST API endpoints:
 - CORS enabled for cross-origin requests
 - JSON response format
 
-## Developers Contact
+## Contact Us
 - GitHub: https://github.com/AbdullahIbneAziz
 - GitHub: https://github.com/AlRafiAhmed
 - GitHub: https://github.com/MH-Mehedi06
