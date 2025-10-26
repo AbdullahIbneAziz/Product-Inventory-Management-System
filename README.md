@@ -32,7 +32,6 @@ The system provides the following REST API endpoints:
 ## Technical Details
 
 - Built using PHP backend with MySQL/PDO database
-- RESTful API architecture
 - Transaction management for data integrity
 - CORS enabled for cross-origin requests
 - JSON response format
